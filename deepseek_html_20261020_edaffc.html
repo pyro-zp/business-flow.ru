@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Бизнес Флоу — помогаю бизнесу услышать себя</title>
+<meta name="description" content="Сессии для топ-команд, где на совещаниях все согласны, а после ничего не меняется. Команда честно проговаривает проблемы и договаривается о конкретных действиях.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --graphite:#1E2A32;
+    --sand:#E8DFD3;
+    --sand-light:#F4EFE7;
+    --terracotta:#C96F4A;
+    --terracotta-dark:#B35C38;
+    --text:#1E2A32;
+    --muted:#5C6B75;
+    --line:rgba(30,42,50,.12);
+    --line-light:rgba(232,223,211,.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--text);
+    background:#fff;
+    line-height:1.6;
+    font-size:17px;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:'Manrope',sans-serif;line-height:1.15;letter-spacing:-.02em}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .narrow{max-width:780px;margin:0 auto;padding:0 24px}
+  section{padding:96px 0}
+  .eyebrow{
+    font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--terracotta);margin-bottom:20px;
+  }
+  h2{font-size:clamp(28px,4vw,42px);font-weight:800;margin-bottom:24px}
+  h3{font-size:20px;font-weight:700;margin-bottom:10px}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(30,42,50,.92);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line-light);
+  }
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{font-family:'Manrope',sans-serif;font-weight:800;font-size:19px;color:#fff;letter-spacing:-.02em}
+  .logo span{color:var(--terracotta)}
+  .nav-links{display:flex;gap:32px;font-size:15px;color:rgba(255,255,255,.72)}
+  .nav-links a:hover{color:#fff}
+  .nav-phone{font-weight:600;font-size:15px;color:#fff;white-space:nowrap}
+  .nav-phone:hover{color:var(--terracotta)}
+  @media(max-width:860px){.nav-links{display:none}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--graphite);color:#fff;
+    padding:120px 0 130px;position:relative;overflow:hidden;
+  }
+  .hero .wrap{position:relative;z-index:2}
+  .hero h1{
+    font-size:clamp(36px,6vw,68px);font-weight:800;max-width:820px;
+    margin-bottom:28px;
+  }
+  .hero p.lead{
+    font-size:clamp(17px,2vw,20px);color:rgba(255,255,255,.72);
+    max-width:600px;margin-bottom:44px;
+  }
+  .btn{
+    display:inline-flex;align-items:center;gap:10px;
+    background:var(--terracotta);color:#fff;
+    font-family:'Manrope',sans-serif;font-weight:700;font-size:16px;
+    padding:17px 34px;border-radius:4px;border:none;cursor:pointer;
+    transition:background .2s ease, transform .15s ease;
+  }
+  .btn:hover{background:var(--terracotta-dark);transform:translateY(-1px)}
+  .hero-contacts{
+    display:flex;flex-wrap:wrap;gap:24px;margin-top:26px;
+    font-size:15px;color:rgba(255,255,255,.6);
+  }
+  .hero-contacts a:hover{color:var(--terracotta)}
+  .hero-note{
+    margin-top:38px;padding-top:26px;border-top:1px solid var(--line-light);
+    font-size:14px;color:rgba(255,255,255,.5);max-width:460px;
+  }
+  /* декоративные круги */
+  .rings{position:absolute;right:-140px;top:50%;transform:translateY(-50%);pointer-events:none}
+  .rings circle{fill:none;stroke:rgba(201,111,74,.28)}
+  .rings .dot{fill:var(--terracotta);opacity:.85}
+  @media(max-width:1000px){.rings{opacity:.35;right:-220px}}
+
+  /* ---------- PAIN ---------- */
+  .pain{background:var(--sand-light)}
+  .pain-list{display:grid;gap:0;margin-top:16px;border-top:1px solid var(--line)}
+  .pain-item{
+    display:flex;gap:20px;align-items:flex-start;
+    padding:24px 0;border-bottom:1px solid var(--line);font-size:18px;
+  }
+  .pain-item::before{
+    content:"";flex:0 0 8px;width:8px;height:8px;border-radius:50%;
+    background:var(--terracotta);margin-top:11px;
+  }
+
+  /* ---------- TABLE ---------- */
+  .compare{width:100%;border-collapse:collapse;margin-top:12px;font-size:17px}
+  .compare th,.compare td{text-align:left;padding:20px 18px;border-bottom:1px solid var(--line)}
+  .compare th{
+    font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;
+    text-transform:uppercase;letter-spacing:.1em;color:var(--muted);
+    border-bottom:2px solid var(--graphite);
+  }
+  .compare td:first-child{font-weight:600;width:40%}
+  .compare td:last-child{color:var(--muted)}
+  .conclusion{
+    margin-top:36px;padding:28px 32px;border-left:3px solid var(--terracotta);
+    background:var(--sand-light);font-size:18px;
+  }
+
+  /* ---------- METHOD ---------- */
+  .method{background:var(--graphite);color:#fff}
+  .method h2{color:#fff}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:16px}
+  .step{border-top:1px solid var(--line-light);padding-top:24px}
+  .step .num{
+    font-family:'Manrope',sans-serif;font-size:13px;font-weight:700;
+    color:var(--terracotta);letter-spacing:.14em;margin-bottom:16px;
+  }
+  .step h3{color:#fff;font-size:22px;margin-bottom:12px}
+  .step p{color:rgba(255,255,255,.68);font-size:16px}
+  @media(max-width:820px){.steps{grid-template-columns:1fr;gap:28px}}
+
+  /* ---------- TIMELINE ---------- */
+  .timeline{margin-top:16px;border-left:2px solid var(--line);padding-left:0;list-style:none}
+  .tl-item{
+    position:relative;display:flex;gap:28px;padding:0 0 32px 32px;
+  }
+  .tl-item::before{
+    content:"";position:absolute;left:-7px;top:7px;
+    width:12px;height:12px;border-radius:50%;
+    background:#fff;border:3px solid var(--terracotta);
+  }
+  .tl-time{
+    font-family:'Manrope',sans-serif;font-weight:700;font-size:15px;
+    color:var(--terracotta);flex:0 0 56px;
+  }
+  .tl-text{font-size:17px}
+  .session-meta{
+    display:flex;flex-wrap:wrap;gap:12px;margin-bottom:36px;
+  }
+  .chip{
+    font-size:14px;font-weight:600;padding:8px 16px;border-radius:100px;
+    background:var(--sand);color:var(--graphite);
+  }
+
+  /* ---------- PRICING ---------- */
+  .pricing{background:var(--sand-light)}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:16px}
+  .card{
+    background:#fff;padding:36px 32px;border-radius:6px;
+    display:flex;flex-direction:column;border:1px solid rgba(30,42,50,.06);
+  }
+  .card h3{font-size:22px;margin-bottom:14px}
+  .card p{color:var(--muted);font-size:16px;flex:1;margin-bottom:24px}
+  .card .price{
+    font-family:'Manrope',sans-serif;font-weight:800;font-size:24px;
+    margin-bottom:24px;color:var(--graphite);
+  }
+  .card .price small{font-size:14px;font-weight:500;color:var(--muted);display:block;margin-top:4px}
+  .card .btn{width:100%;justify-content:center;font-size:15px;padding:14px 20px}
+  @media(max-width:880px){.cards{grid-template-columns:1fr}}
+
+  /* ---------- RESULTS ---------- */
+  .results-list{list-style:none;display:grid;gap:0;margin-top:8px}
+  .results-list li{
+    padding:26px 0 26px 44px;border-bottom:1px solid var(--line);
+    position:relative;font-size:18px;
+  }
+  .results-list li::before{
+    content:"→";position:absolute;left:0;top:26px;
+    color:var(--terracotta);font-weight:700;
+  }
+
+  /* ---------- ABOUT ---------- */
+  .about{background:var(--graphite);color:#fff}
+  .about-inner{display:grid;grid-template-columns:320px 1fr;gap:64px;align-items:start}
+  .about-photo{
+    aspect-ratio:4/5;border-radius:6px;
+    background:linear-gradient(140deg,#2C3B45,#1A242B);
+    display:flex;align-items:center;justify-content:center;
+    color:rgba(255,255,255,.32);font-size:14px;text-align:center;padding:24px;
+  }
+  .about h3{color:#fff;font-size:26px;margin-bottom:6px}
+  .about .role{color:var(--terracotta);font-size:15px;font-weight:600;margin-bottom:24px}
+  .about p{color:rgba(255,255,255,.72);margin-bottom:18px}
+  .quote{
+    margin-top:32px;padding:26px 30px;border-left:3px solid var(--terracotta);
+    background:rgba(255,255,255,.05);font-size:19px;font-style:italic;
+    color:#fff;border-radius:0 4px 4px 0;
+  }
+  @media(max-width:820px){.about-inner{grid-template-columns:1fr;gap:36px}.about-photo{max-width:280px}}
+
+  /* ---------- FAQ ---------- */
+  details{
+    border-bottom:1px solid var(--line);padding:26px 0;
+  }
+  summary{
+    font-family:'Manrope',sans-serif;font-weight:700;font-size:19px;
+    cursor:pointer;list-style:none;display:flex;justify-content:space-between;
+    align-items:center;gap:20px;
+  }
+  summary::-webkit-details-marker{display:none}
+  summary::after{
+    content:"+";font-size:26px;font-weight:400;color:var(--terracotta);
+    flex-shrink:0;transition:transform .2s;
+  }
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{margin-top:16px;color:var(--muted);font-size:17px;max-width:680px}
+
+  /* ---------- FORM ---------- */
+  .cta{background:var(--sand)}
+  .cta h2{max-width:620px}
+  .cta > .wrap > p{max-width:560px;color:var(--muted);margin-bottom:44px;font-size:18px}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:680px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .field.full{grid-column:1/-1}
+  label{font-size:14px;font-weight:600;color:var(--graphite)}
+  input,textarea{
+    font-family:'Inter',sans-serif;font-size:16px;padding:15px 16px;
+    border:1px solid rgba(30,42,50,.16);border-radius:4px;background:#fff;
+    color:var(--text);transition:border-color .2s;
+  }
+  input:focus,textarea:focus{outline:none;border-color:var(--terracotta)}
+  textarea{resize:vertical;min-height:110px}
+  .form-grid .btn{grid-column:1/-1;justify-content:center;margin-top:8px}
+  .form-contacts{
+    margin-top:28px;display:flex;flex-wrap:wrap;gap:24px;
+    font-size:15px;color:var(--muted);
+  }
+  .form-contacts a:hover{color:var(--terracotta)}
+  @media(max-width:640px){.form-grid{grid-template-columns:1fr}}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:var(--graphite);color:rgba(255,255,255,.55);padding:56px 0 40px;font-size:15px}
+  .foot-inner{display:flex;flex-wrap:wrap;justify-content:space-between;gap:32px;align-items:flex-start}
+  .foot-brand{font-family:'Manrope',sans-serif;font-weight:800;font-size:18px;color:#fff;margin-bottom:10px}
+  .foot-brand span{color:var(--terracotta)}
+  footer a{color:rgba(255,255,255,.75)}
+  footer a:hover{color:var(--terracotta)}
+  .foot-links{display:flex;flex-wrap:wrap;gap:28px}
+  .foot-bottom{
+    margin-top:44px;padding-top:24px;border-top:1px solid var(--line-light);
+    font-size:13px;color:rgba(255,255,255,.36);
+  }
+
+  /* появление при скролле */
+  .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s ease,transform .6s ease}
+  .reveal.vis{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap nav">
+    <a href="#" class="logo">Бизнес <span>Флоу</span></a>
+    <nav class="nav-links">
+      <a href="#pain">Проблема</a>
+      <a href="#method">Метод</a>
+      <a href="#formats">Форматы</a>
+      <a href="#about">Обо мне</a>
+      <a href="#faq">Вопросы</a>
+    </nav>
+    <a href="tel:+79936347682" class="nav-phone">+7 993 634-76-82</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="rings" width="620" height="620" viewBox="0 0 620 620" aria-hidden="true">
+    <circle cx="310" cy="310" r="300" stroke-width="1"/>
+    <circle cx="310" cy="310" r="230" stroke-width="1"/>
+    <circle cx="310" cy="310" r="160" stroke-width="1"/>
+    <circle class="dot" cx="310" cy="10" r="5"/>
+    <circle class="dot" cx="540" cy="465" r="4"/>
+    <circle class="dot" cx="80" cy="465" r="3"/>
+  </svg>
+  <div class="wrap">
+    <h1>Помогаю бизнесу услышать&nbsp;себя</h1>
+    <p class="lead">
+      Провожу сессии для топ-команд, где на совещаниях все согласны, а после ничего
+      не меняется. Команда честно проговаривает проблемы и договаривается
+      о конкретных действиях.
+    </p>
+    <a href="#cta" class="btn">Обсудить пилот</a>
+    <div class="hero-contacts">
+      <a href="tel:+79936347682">+7 993 634-76-82</a>
+      <a href="https://wa.me/79936347682" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://t.me/+79936347682" target="_blank" rel="noopener">Telegram</a>
+    </div>
+    <p class="hero-note">
+      Первая сессия — 2 часа, без оплаты, с обратной связью.
+    </p>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain" id="pain">
+  <div class="narrow reveal">
+    <div class="eyebrow">Узнаёте?</div>
+    <h2>Если хотя бы два пункта про вас — нам по пути</h2>
+    <div class="pain-list">
+      <div class="pain-item">На совещаниях все кивают, после — каждый делает по-своему.</div>
+      <div class="pain-item">Конфликт между основателем и топом не проговаривается, а тлеет.</div>
+      <div class="pain-item">Люди работают «на автомате», вовлечённости нет.</div>
+      <div class="pain-item">Решение принято, но команда его не разделяет.</div>
+      <div class="pain-item">Стратегия есть на бумаге, в действиях — нет.</div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section>
+  <div class="narrow reveal">
+    <div class="eyebrow">Почему обычное не работает</div>
+    <h2>Вы это уже пробовали</h2>
+    <table class="compare">
+      <thead>
+        <tr><th>Что пробовали</th><th>Что получается</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Тимбилдинг</td><td>Эмоции на день, на следующий — как раньше</td></tr>
+        <tr><td>Коучинг руководителя</td><td>Человек растёт, команда стоит</td></tr>
+        <tr><td>Стратегическая сессия</td><td>Красивый документ, который никто не читает</td></tr>
+      </tbody>
+    </table>
+    <div class="conclusion">
+      Проблема не в знаниях и не в мотивации, а в том, что команда
+      не проговаривает вслух то, что реально происходит.
+    </div>
+  </div>
+</section>
+
+<!-- METHOD -->
+<section class="method" id="method">
+  <div class="wrap reveal">
+    <div class="eyebrow">Метод</div>
+    <h2>Три шага</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="num">01</div>
+        <h3>Круг</h3>
+        <p>Все садятся вместе. Без слайдов, без презентаций, без «давайте по регламенту».</p>
+      </div>
+      <div class="step">
+        <div class="num">02</div>
+        <h3>Разговор от первого лица</h3>
+        <p>Каждый говорит не «что делают не так другие», а «что я вношу в то, что это не решается».</p>
+      </div>
+      <div class="step">
+        <div class="num">03</div>
+        <h3>Договорённости</h3>
+        <p>2–3 конкретных изменения: кто, что, к какому сроку. Фиксируем и фотографируем.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section>
+  <div class="narrow reveal">
+    <div class="eyebrow">Как проходит сессия</div>
+    <h2>Три-четыре часа, которые меняют разговор</h2>
+    <div class="session-meta">
+      <span class="chip">8–15 человек</span>
+      <span class="chip">3–4 часа</span>
+      <span class="chip">Офлайн</span>
+    </div>
+    <ul class="timeline">
+      <li class="tl-item"><span class="tl-time">0:00</span><span class="tl-text">Контракт: зачем собрались и по каким правилам работаем</span></li>
+      <li class="tl-item"><span class="tl-time">0:15</span><span class="tl-text">Чек-ин: у каждого одно предложение о том, что мешает</span></li>
+      <li class="tl-item"><span class="tl-time">0:30</span><span class="tl-text">Картирование: собираем темы, команда выбирает одну</span></li>
+      <li class="tl-item"><span class="tl-time">0:50</span><span class="tl-text">Круг ответственности: главный блок</span></li>
+      <li class="tl-item"><span class="tl-time">1:20</span><span class="tl-text">Договорённости: имена, действия, сроки</span></li>
+      <li class="tl-item"><span class="tl-time">1:40</span><span class="tl-text">Рефлексия и следующий шаг</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- FORMATS -->
+<section class="pricing" id="formats">
+  <div class="wrap reveal">
+    <div class="eyebrow">Форматы</div>
+    <h2>С чего начать</h2>
+    <div class="cards">
+      <div class="card">
+        <h3>Диагностика</h3>
+        <p>1,5 часа с собственником или HRD. Разбираем ситуацию, формулируем задачу.</p>
+        <div class="price">15–25 тыс. ₽<small>1,5 часа</small></div>
+        <a href="#cta" class="btn">Обсудить</a>
+      </div>
+      <div class="card">
+        <h3>Командная сессия</h3>
+        <p>3–4 часа, 8–15 человек, одна реальная тема. На выходе — договорённости.</p>
+        <div class="price">60–120 тыс. ₽<small>3–4 часа</small></div>
+        <a href="#cta" class="btn">Обсудить</a>
+      </div>
+      <div class="card">
+        <h3>Программа</h3>
+        <p>4–6 встреч с той же командой: от конфликта к ответственности, от ответственности к действию.</p>
+        <div class="price">300–600 тыс. ₽<small>4–6 встреч</small></div>
+        <a href="#cta" class="btn">Обсудить</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTS -->
+<section>
+  <div class="narrow reveal">
+    <div class="eyebrow">Результат</div>
+    <h2>Что остаётся после</h2>
+    <ul class="results-list">
+      <li>2–3 договорённости с именами и сроками — на бумаге и в телефоне у каждого.</li>
+      <li>Карта тем, которые команда раньше не проговаривала.</li>
+      <li>Понимание, где именно рвётся: в людях, в процессах или в целях.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="wrap about-inner reveal">
+    <div class="about-photo">Фото — живое, рабочее</div>
+    <div>
+      <h3>Имя Фамилия</h3>
+      <div class="role">Предприниматель · X лет в бизнесе</div>
+      <p>Работаю с групповой динамикой и командными сессиями. Не консультирую «сверху» — иду вместе с командой.</p>
+      <div class="quote">
+        «Я знаю, как выглядит команда, где все вежливо соглашаются, а потом ничего не меняется. Я сам через это проходил».
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="narrow reveal">
+    <div class="eyebrow">Вопросы</div>
+    <h2>Что обычно спрашивают</h2>
+    <details>
+      <summary>Это тренинг?</summary>
+      <p>Нет. Никаких упражнений и мотивации — работа с реальной ситуацией команды.</p>
+    </details>
+    <details>
+      <summary>Что если будет конфликт?</summary>
+      <p>Конфликт — это материал. Я работаю с ним, а не гашу.</p>
+    </details>
+    <details>
+      <summary>Нужно ли готовиться?</summary>
+      <p>Нет. Нужна только одна реальная тема, которая болит.</p>
+    </details>
+    <details>
+      <summary>Вы работаете удалённо?</summary>
+      <p>Основной формат — офлайн. Удалённо — диагностика и индивидуальные встречи.</p>
+    </details>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="cta">
+  <div class="wrap reveal">
+    <div class="eyebrow">Пилот</div>
+    <h2>Проведём пилот на одной вашей реальной теме</h2>
+    <p>Два часа, без оплаты. После — обратная связь: что я увидел в команде и какой формат предложил бы дальше.</p>
+
+    <form class="form-grid" action="#" method="post" onsubmit="event.preventDefault();this.querySelector('.btn').textContent='Отправлено ✓';">
+      <div class="field">
+        <label for="name">Имя</label>
+        <input id="name" name="name" type="text" required placeholder="Как к вам обращаться">
+      </div>
+      <div class="field">
+        <label for="contact">Телефон или Telegram</label>
+        <input id="contact" name="contact" type="text" required placeholder="+7 ... или @username">
+      </div>
+      <div class="field full">
+        <label for="company">Компания и размер команды</label>
+        <input id="company" name="company" type="text" placeholder="Например: производство, 120 человек">
+      </div>
+      <div class="field full">
+        <label for="pain">Что сейчас болит</label>
+        <textarea id="pain" name="pain" placeholder="Пара предложений о ситуации в команде"></textarea>
+      </div>
+      <button class="btn" type="submit">Отправить</button>
+    </form>
+
+    <div class="form-contacts">
+      <a href="tel:+79936347682">+7 993 634-76-82</a>
+      <a href="https://wa.me/79936347682" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://t.me/+79936347682" target="_blank" rel="noopener">Telegram</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-inner">
+      <div>
+        <div class="foot-brand">Бизнес <span>Флоу</span></div>
+        <div>business-flow.ru</div>
+      </div>
+      <div class="foot-links">
+        <a href="tel:+79936347682">+7 993 634-76-82</a>
+        <a href="https://wa.me/79936347682" target="_blank" rel="noopener">WhatsApp</a>
+        <a href="https://t.me/+79936347682" target="_blank" rel="noopener">Telegram</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      © 2026 Бизнес Флоу · Политика конфиденциальности
+    </div>
+  </div>
+</footer>
+
+<script>
+  // появление блоков при скролле
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('vis'); io.unobserve(e.target);} });
+  },{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
