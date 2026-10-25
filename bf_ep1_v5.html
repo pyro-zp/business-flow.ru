@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бизнес Флоу — Промо (v6: + бесплатная сессия)</title>
+<style>
+  :root {
+    --bg: #1A1D22;
+    --text: #F6F1E8;
+    --accent: #B96F55;
+    --navy: #24384F;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .cinema {
+    position: relative;
+    width: 100%;
+    max-width: 1200px;
+    aspect-ratio: 16 / 9;
+    background: #F6F1E8;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  svg { width: 100%; height: 100%; display: block; }
+
+  .subtitles {
+    position: absolute;
+    bottom: 6%;
+    left: 10%;
+    right: 10%;
+    text-align: center;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .subtitles span {
+    display: inline-block;
+    background: rgba(36, 56, 79, 0.88);
+    color: #FFF;
+    padding: 8px 18px;
+    border-radius: 8px;
+    font-size: clamp(15px, 1.9vw, 22px);
+    line-height: 1.4;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    max-width: 900px;
+  }
+
+  .start-screen {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 29, 34, 0.85);
+    backdrop-filter: blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: opacity 0.5s ease;
+  }
+  .start-screen.hidden { opacity: 0; pointer-events: none; }
+  .start-btn {
+    background: var(--accent);
+    color: #FFF;
+    border: none;
+    padding: 16px 40px;
+    font-size: 20px;
+    border-radius: 40px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(185, 111, 85, 0.4);
+    transition: transform 0.2s;
+  }
+  .start-btn:hover { transform: scale(1.05); }
+  .start-screen p { margin-top: 20px; font-size: 14px; color: #9A9089; }
+
+  .cta-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(246, 241, 232, 0.95);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 1.2s ease;
+    text-align: center;
+    padding: 40px;
+  }
+  .cta-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .cta-overlay h1 {
+    font-size: 48px;
+    color: var(--navy);
+    margin: 0 0 16px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .cta-overlay p {
+    font-size: 22px;
+    color: #4A443D;
+    max-width: 700px;
+    line-height: 1.4;
+    margin: 0 0 40px;
+    font-weight: 400;
+  }
+  .cta-link-btn {
+    display: inline-block;
+    background: var(--accent);
+    color: #FFF;
+    text-decoration: none;
+    padding: 18px 48px;
+    font-size: 20px;
+    border-radius: 40px;
+    font-weight: 600;
+    box-shadow: 0 10px 30px rgba(185, 111, 85, 0.3);
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+  }
+  .cta-link-btn:hover {
+    transform: translateY(-3px);
+    background: #A55B43;
+    box-shadow: 0 15px 35px rgba(185, 111, 85, 0.4);
+  }
+  .cta-note {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #7A7169;
+  }
+
+  @keyframes breathe {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-3px); }
+  }
+  @keyframes talk {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(0.5deg); }
+  }
+  @keyframes nod {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(3deg); }
+  }
+  @keyframes lean_in {
+    0%, 100% { transform: rotate(0deg) translateY(0); }
+    50% { transform: rotate(-2deg) translateY(-2px); }
+  }
+  @keyframes sigh {
+    0%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-5px); }
+    60% { transform: translateY(2px); }
+  }
+
+  .char { transform-origin: 200px 600px; }
+  .char.idle { animation: breathe 4s ease-in-out infinite; }
+  .char.speaking { animation: talk 0.3s ease-in-out infinite; }
+  .char.nodding { animation: nod 0.8s ease-in-out 2; }
+  .char.hesitating { animation: lean_in 2s ease-in-out infinite; }
+  .char.sighing { animation: sigh 1.2s ease-in-out 1; }
+</style>
+</head>
+<body>
+
+<div class="cinema">
+  
+  <div class="start-screen" id="startScreen">
+    <button class="start-btn" onclick="startVideo()">▶ Включить ролик</button>
+    <p>Звук синтезируется браузером. Убедитесь, что он включен.</p>
+  </div>
+
+  <div class="subtitles" id="subtitles" style="opacity:0;">
+    <span id="subText">...</span>
+  </div>
+
+  <div class="cta-overlay" id="ctaOverlay">
+    <h1>Бизнес Флоу</h1>
+    <p>Фасилитация, которая превращает невысказанные сомнения в работающую стратегию. Давайте услышим друг друга.</p>
+    
+    <a href="https://business-flow.ru" target="_blank" class="cta-link-btn">
+      Обсудить пилот
+    </a>
+    
+    <div class="cta-note">Первая сессия — 2 часа, без оплаты.</div>
+  </div>
+
+  <svg id="videoSvg" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- БОСС -->
+      <g id="asset-boss">
+        <defs>
+          <linearGradient id="bsuit" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2E4459"/><stop offset="1" stop-color="#16232F"/></linearGradient>
+          <linearGradient id="bgray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#B0ACA6"/><stop offset="1" stop-color="#6F6C66"/></linearGradient>
+        </defs>
+        <path d="M148,595 Q148,568 168,566 L200,566 Q208,566 208,580 L208,595 Z" fill="#1A1D22"/>
+        <path d="M192,595 Q192,580 192,566 L232,566 Q252,568 252,595 Z" fill="#1A1D22"/>
+        <path d="M158,420 L192,420 L192,566 L160,566 Z" fill="url(#bsuit)"/>
+        <path d="M208,420 L242,420 L240,566 L208,566 Z" fill="url(#bsuit)"/>
+        <path d="M150,245 L250,245 L250,420 L150,420 Z" fill="url(#bsuit)"/>
+        <path d="M180,240 L220,240 L200,292 Z" fill="#F5EBDD"/>
+        <path d="M193,246 L207,246 L205,268 L200,276 L195,268 Z" fill="#7A4446"/>
+        <path d="M196,268 L204,268 L209,330 L200,345 L191,330 Z" fill="#854E50"/>
+        <rect x="194" y="298" width="12" height="2" fill="#D4AF37"/>
+        <path d="M150,245 L180,240 L200,292 L165,310 Z" fill="#3A5066"/>
+        <path d="M250,245 L220,240 L200,292 L235,310 Z" fill="#3A5066"/>
+        <circle cx="200" cy="340" r="2" fill="#16232F"/>
+        <circle cx="200" cy="380" r="2" fill="#16232F"/>
+        <rect x="185" y="214" width="30" height="32" fill="#DDA58A"/>
+        <path d="M185,214 Q200,226 215,214" stroke="#BD806A" stroke-width="1.2" fill="none"/>
+        <path d="M148,58 L252,58 Q258,58 258,80 L258,190 Q258,216 250,222 L150,222 Q142,216 142,190 L142,80 Q142,58 148,58 Z" fill="#DDA58A"/>
+        <path d="M150,60 L250,60 Q258,60 258,80" stroke="#F2C7B2" stroke-width="2" fill="none" opacity="0.4"/>
+        <ellipse cx="168" cy="150" rx="16" ry="65" fill="#C99077" opacity="0.22"/>
+        <path d="M142,96 Q132,104 134,148 Q136,160 146,160 L150,120 L148,96 Z" fill="url(#bgray)"/>
+        <path d="M258,96 Q268,104 266,148 Q264,160 254,160 L250,120 L252,96 Z" fill="url(#bgray)"/>
+        <path d="M138,120 L144,122" stroke="#D1CDC8" stroke-width="1.5" stroke-linecap="round"/>
+        <path d="M262,120 L256,122" stroke="#D1CDC8" stroke-width="1.5" stroke-linecap="round"/>
+        <circle cx="175" cy="135" r="7.5" fill="#fff"/>
+        <circle cx="225" cy="135" r="7.5" fill="#fff"/>
+        <circle cx="176" cy="136" r="5" fill="#292C31"/>
+        <circle cx="226" cy="136" r="5" fill="#292C31"/>
+        <circle cx="178" cy="134" r="1.5" fill="#fff"/>
+        <circle cx="228" cy="134" r="1.5" fill="#fff"/>
+        <path d="M162,118 Q176,112 189,118" stroke="#5A524D" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M211,118 Q225,112 238,118" stroke="#5A524D" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+        <path d="M200,145 L197,163" stroke="#BD806A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M194,166 Q200,169 206,166" stroke="#BD806A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M184,188 Q200,190 216,186" stroke="#5A3A33" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M148,245 C125,280 115,340 120,380 L140,380 C140,340 145,280 160,245 Z" fill="url(#bsuit)"/>
+        <path d="M252,245 C275,280 285,340 280,380 L260,380 C260,340 255,280 240,245 Z" fill="url(#bsuit)"/>
+        <path d="M120,380 Q120,398 130,398 Q140,398 140,380 Q135,385 130,385 Q125,385 120,380 Z" fill="#DDA58A"/>
+        <path d="M280,380 Q280,398 270,398 Q260,398 260,380 Q265,385 270,385 Q275,385 280,380 Z" fill="#DDA58A"/>
+      </g>
+
+      <!-- МАРИНА -->
+      <g id="asset-marina">
+        <defs>
+          <linearGradient id="mhair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7A5646"/><stop offset="0.55" stop-color="#67483C"/><stop offset="1" stop-color="#433027"/></linearGradient>
+          <linearGradient id="mjacket" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FA594"/><stop offset="1" stop-color="#6C8071"/></linearGradient>
+        </defs>
+        <path d="M128,140 Q113,75 155,52 Q180,40 200,40 Q220,40 245,52 Q287,75 272,140 L282,380 Q285,410 268,416 Q255,411 252,380 L148,380 Q145,411 132,416 Q115,410 118,380 Z" fill="url(#mhair)"/>
+        <path d="M162,420 L192,420 L190,565 L165,565 Z" fill="#414A50"/>
+        <path d="M208,420 L238,420 L235,565 L210,565 Z" fill="#414A50"/>
+        <path d="M155,592 Q155,566 168,564 L198,564 Q203,570 203,588 L203,592 Q195,597 175,597 Q160,597 155,592 Z" fill="#292C31"/>
+        <path d="M245,592 Q245,566 232,564 L202,564 Q197,570 197,588 L197,592 Q205,597 225,597 Q240,597 245,592 Z" fill="#292C31"/>
+        <rect x="182" y="590" width="4" height="10" fill="#1A1D22"/>
+        <rect x="214" y="590" width="4" height="10" fill="#1A1D22"/>
+        <path d="M160,246 L240,246 L245,420 L155,420 Z" fill="#F5EBDD"/>
+        <path d="M185,246 Q200,278 215,246" fill="#E8DCC9"/>
+        <path d="M128,246 Q123,246 123,262 L123,420 L155,420 L165,290 L155,268 Z" fill="url(#mjacket)"/>
+        <path d="M272,246 Q277,246 277,262 L277,420 L245,420 L235,290 L245,268 Z" fill="url(#mjacket)"/>
+        <path d="M155,268 L165,290" stroke="#566A5A" stroke-width="1.5" fill="none"/>
+        <path d="M245,268 L235,290" stroke="#566A5A" stroke-width="1.5" fill="none"/>
+        <path d="M188,214 L212,214 L212,246 L188,246 Z" fill="#DDA58A"/>
+        <ellipse cx="200" cy="145" rx="58" ry="72" fill="#DDA58A"/>
+        <ellipse cx="178" cy="150" rx="14" ry="55" fill="#C99077" opacity="0.2"/>
+        <path d="M142,112 Q146,78 168,64 Q186,54 202,55 Q220,56 236,68 Q254,82 258,110 Q253,94 238,84 Q220,76 200,78 Q180,80 162,90 Q148,100 142,112 Z" fill="url(#mhair)"/>
+        <path d="M142,108 Q133,150 136,205 Q140,225 148,228 Q150,182 156,142 Q150,122 142,108 Z" fill="url(#mhair)"/>
+        <path d="M258,108 Q267,150 264,205 Q260,225 252,228 Q250,182 244,142 Q250,122 258,108 Z" fill="url(#mhair)"/>
+        <ellipse cx="176" cy="145" rx="9" ry="10" fill="#fff"/>
+        <ellipse cx="224" cy="145" rx="9" ry="10" fill="#fff"/>
+        <circle cx="178" cy="146" r="5.5" fill="#292C31"/>
+        <circle cx="226" cy="146" r="5.5" fill="#292C31"/>
+        <circle cx="180" cy="144" r="1.8" fill="#fff"/>
+        <circle cx="228" cy="144" r="1.8" fill="#fff"/>
+        <path d="M167,140 L161,137" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M166,145 L160,145" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M167,150 L161,152" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M233,140 L239,137" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M234,145 L240,145" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M233,150 L239,152" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M162,126 Q172,119 185,123" stroke="#4A372E" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M215,123 Q228,119 238,126" stroke="#4A372E" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M200,156 L198,168" stroke="#BD806A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M195,171 Q200,173 205,171" stroke="#BD806A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="165" cy="172" rx="13" ry="7" fill="#E8A891" opacity="0.35"/>
+        <ellipse cx="235" cy="172" rx="13" ry="7" fill="#E8A891" opacity="0.35"/>
+        <path d="M186,190 Q192,185 200,188 Q208,185 214,190 Q208,197 200,196 Q192,197 186,190 Z" fill="#B87574"/>
+        <circle cx="140" cy="178" r="2.5" fill="#D4AF37"/>
+        <circle cx="260" cy="178" r="2.5" fill="#D4AF37"/>
+        <path d="M180,224 Q200,242 220,224" stroke="#D4AF37" stroke-width="1.3" fill="none"/>
+        <circle cx="200" cy="242" r="2.5" fill="#D4AF37"/>
+        <path d="M126,258 Q118,330 126,402 L142,406 L150,394 L152,260 Z" fill="url(#mjacket)"/>
+        <path d="M274,258 Q282,330 274,402 L258,406 L250,394 L248,260 Z" fill="url(#mjacket)"/>
+        <ellipse cx="134" cy="414" rx="9" ry="11" fill="#DDA58A"/>
+        <ellipse cx="266" cy="414" rx="9" ry="11" fill="#DDA58A"/>
+      </g>
+
+      <!-- ИГОРЬ -->
+      <g id="asset-igor">
+        <defs>
+          <linearGradient id="isweater" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5C6570"/><stop offset="1" stop-color="#3E464F"/></linearGradient>
+          <linearGradient id="ihair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6C5B4D"/><stop offset="1" stop-color="#3E3128"/></linearGradient>
+        </defs>
+        <path d="M150,592 Q150,568 168,566 L200,566 Q206,566 206,578 L206,592 Z" fill="#1A1D22"/>
+        <path d="M194,592 Q194,578 194,566 L232,566 Q250,568 250,592 Z" fill="#1A1D22"/>
+        <path d="M158,420 L192,420 L192,566 L160,566 Z" fill="#65717D"/>
+        <path d="M208,420 L242,420 L240,566 L208,566 Z" fill="#65717D"/>
+        <path d="M148,246 L252,246 L252,420 L148,420 Z" fill="url(#isweater)"/>
+        <path d="M180,242 L220,242 L200,280 Z" fill="#F5EBDD"/>
+        <path d="M148,258 Q200,272 252,258" stroke="#2F363D" stroke-width="1.5" fill="none"/>
+        <rect x="186" y="214" width="28" height="32" fill="#DDA58A"/>
+        <path d="M150,60 L250,60 Q258,60 258,86 L258,186 Q258,212 248,218 L152,218 Q142,212 142,186 L142,86 Q142,60 150,60 Z" fill="#DDA58A"/>
+        <ellipse cx="170" cy="145" rx="18" ry="55" fill="#C99077" opacity="0.18"/>
+        <path d="M158,200 Q200,214 242,200 L242,214 Q200,222 158,214 Z" fill="#5C4438" opacity="0.15"/>
+        <path d="M140,90 Q142,58 168,50 Q200,44 232,50 Q258,58 260,90 Q252,80 234,74 Q212,68 188,70 Q166,74 150,82 Q144,84 140,90 Z" fill="url(#ihair)"/>
+        <circle cx="174" cy="140" r="7" fill="#fff"/>
+        <circle cx="226" cy="140" r="7" fill="#fff"/>
+        <circle cx="175" cy="141" r="4.6" fill="#292C31"/>
+        <circle cx="227" cy="141" r="4.6" fill="#292C31"/>
+        <circle cx="177" cy="139" r="1.4" fill="#fff"/>
+        <circle cx="229" cy="139" r="1.4" fill="#fff"/>
+        <path d="M162,124 L186,122" stroke="#2E2520" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M214,122 L238,124" stroke="#2E2520" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M200,148 L198,164" stroke="#BD806A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M195,167 Q200,170 205,167" stroke="#BD806A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M186,190 Q200,191 214,190" stroke="#5A3A33" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M120,258 Q112,330 120,404 L140,408 L150,396 L152,262 Z" fill="url(#isweater)"/>
+        <path d="M280,258 Q288,330 280,404 L260,408 L250,396 L248,262 Z" fill="url(#isweater)"/>
+        <ellipse cx="132" cy="414" rx="10" ry="13" fill="#DDA58A"/>
+        <ellipse cx="268" cy="414" rx="10" ry="13" fill="#DDA58A"/>
+      </g>
+
+      <!-- ДАША -->
+      <g id="asset-dasha">
+        <defs>
+          <linearGradient id="dcurls" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#43333A"/><stop offset="1" stop-color="#221C20"/></linearGradient>
+          <linearGradient id="dcardigan" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#C67A60"/><stop offset="1" stop-color="#A55B43"/></linearGradient>
+        </defs>
+        <g fill="url(#dcurls)">
+          <circle cx="200" cy="62" r="44"/><circle cx="252" cy="86" r="38"/><circle cx="278" cy="140" r="40"/><circle cx="268" cy="194" r="36"/><circle cx="232" cy="228" r="34"/><circle cx="168" cy="228" r="34"/><circle cx="132" cy="194" r="36"/><circle cx="122" cy="140" r="40"/><circle cx="148" cy="86" r="38"/>
+        </g>
+        <g fill="#5A444B" opacity="0.55">
+          <circle cx="192" cy="52" r="14"/><circle cx="252" cy="76" r="10"/><circle cx="136" cy="128" r="12"/><circle cx="264" cy="152" r="10"/>
+        </g>
+        <path d="M164,420 L192,420 L190,562 L168,562 Z" fill="#345B63"/>
+        <path d="M208,420 L236,420 L233,562 L210,562 Z" fill="#345B63"/>
+        <path d="M158,588 Q158,566 172,564 L196,564 Q202,566 202,584 L202,588 Q194,594 178,594 Q164,594 158,588 Z" fill="#292C31"/>
+        <path d="M242,588 Q242,566 228,564 L204,564 Q198,566 198,584 L198,588 Q206,594 222,594 Q236,594 242,588 Z" fill="#292C31"/>
+        <path d="M152,248 L248,248 L248,420 L152,420 Z" fill="url(#dcardigan)"/>
+        <path d="M182,246 L218,246 L218,420 L182,420 Z" fill="#F5EBDD"/>
+        <path d="M182,246 L182,420" stroke="#8F4C39" stroke-width="1.5"/>
+        <path d="M218,246 L218,420" stroke="#8F4C39" stroke-width="1.5"/>
+        <circle cx="200" cy="300" r="1.8" fill="#7A3A2A"/><circle cx="200" cy="340" r="1.8" fill="#7A3A2A"/><circle cx="200" cy="380" r="1.8" fill="#7A3A2A"/>
+        <path d="M188,216 L212,216 L212,248 L188,248 Z" fill="#DDA58A"/>
+        <ellipse cx="200" cy="148" rx="60" ry="68" fill="#DDA58A"/>
+        <ellipse cx="180" cy="152" rx="14" ry="50" fill="#C99077" opacity="0.2"/>
+        <path d="M144,118 Q148,84 168,72 Q186,64 202,64 Q220,64 236,74 Q252,86 256,118 Q252,100 236,90 Q218,82 200,84 Q182,86 164,94 Q150,102 144,118 Z" fill="url(#dcurls)"/>
+        <circle cx="222" cy="96" r="6" fill="url(#dcurls)"/>
+        <ellipse cx="178" cy="150" rx="10" ry="11" fill="#fff"/>
+        <ellipse cx="222" cy="150" rx="10" ry="11" fill="#fff"/>
+        <circle cx="180" cy="151" r="6" fill="#292C31"/>
+        <circle cx="224" cy="151" r="6" fill="#292C31"/>
+        <circle cx="182" cy="149" r="2" fill="#fff"/>
+        <circle cx="226" cy="149" r="2" fill="#fff"/>
+        <path d="M169,144 L163,141" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M168,150 L162,150" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M169,156 L163,158" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M231,144 L237,141" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M232,150 L238,150" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M231,156 L237,158" stroke="#292C31" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M164,132 Q174,125 188,129" stroke="#2A2225" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M212,129 Q226,125 236,132" stroke="#2A2225" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+        <path d="M200,160 L198,172" stroke="#BD806A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <path d="M195,175 Q200,177 205,175" stroke="#BD806A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="166" cy="176" rx="15" ry="8" fill="#E8A891" opacity="0.42"/>
+        <ellipse cx="234" cy="176" rx="15" ry="8" fill="#E8A891" opacity="0.42"/>
+        <path d="M188,194 Q200,200 212,194" stroke="#7A4A49" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="142" cy="180" r="2" fill="#D4AF37"/><circle cx="258" cy="180" r="2" fill="#D4AF37"/>
+        <path d="M134,258 Q126,330 132,404 L148,408 L156,396 L156,262 Z" fill="url(#dcardigan)"/>
+        <path d="M266,258 Q274,330 268,404 L252,408 L244,396 L244,262 Z" fill="url(#dcardigan)"/>
+        <ellipse cx="142" cy="416" rx="9" ry="11" fill="#DDA58A"/>
+        <ellipse cx="258" cy="416" rx="9" ry="11" fill="#DDA58A"/>
+      </g>
+    </defs>
+
+    <!-- СЦЕНА 1: КАБИНЕТ ШЕФА -->
+    <g id="scene-office">
+      <rect x="0" y="0" width="1200" height="800" fill="#F6F1E8"/>
+      <rect x="0" y="650" width="1200" height="150" fill="#EAE2D5"/>
+      <rect x="0" y="640" width="1200" height="10" fill="#D1C9B8"/>
+      <g transform="translate(60, 100)">
+        <rect x="0" y="0" width="240" height="280" fill="#D9E4E8" stroke="#FFFFFF" stroke-width="10" rx="4"/>
+        <rect x="20" y="150" width="30" height="130" fill="#C4D0D6"/>
+        <rect x="60" y="100" width="50" height="180" fill="#B8C5CB"/>
+        <rect x="120" y="130" width="45" height="150" fill="#C4D0D6"/>
+        <rect x="175" y="170" width="50" height="110" fill="#B8C5CB"/>
+        <line x1="120" y1="0" x2="120" y2="280" stroke="#FFFFFF" stroke-width="7"/>
+        <line x1="0" y1="140" x2="240" y2="140" stroke="#FFFFFF" stroke-width="7"/>
+      </g>
+      <g transform="translate(680, 60)">
+        <rect width="440" height="320" fill="#FFFFFF" stroke="#D1BFAE" stroke-width="6" rx="6"/>
+        <text x="40" y="140" font-size="100" font-weight="800" fill="#24384F" font-family="Helvetica, Arial, sans-serif">5</text>
+        <text x="150" y="100" font-size="22" fill="#65717D" font-family="Helvetica, Arial, sans-serif">дней до запуска</text>
+        <circle cx="105" cy="115" r="95" fill="none" stroke="#B96F55" stroke-width="6" stroke-dasharray="12 8"/>
+        <path d="M 240 220 L 380 220" stroke="#B96F55" stroke-width="4" fill="none" stroke-linecap="round"/>
+        <path d="M 370 210 L 380 220 L 370 230" stroke="#B96F55" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="250" y="200" font-size="18" fill="#65717D" font-family="Helvetica, Arial, sans-serif">дедлайн</text>
+      </g>
+      <g transform="translate(200, 30) scale(1.0)">
+        <use href="#asset-boss" class="char idle" id="char-boss"/>
+      </g>
+    </g>
+
+    <!-- СЦЕНА 2: У КУЛЕРА -->
+    <g id="scene-cooler" style="display:none">
+      <rect x="0" y="0" width="1200" height="800" fill="#F1ECE1"/>
+      <rect x="0" y="650" width="1200" height="150" fill="#DCCFB8"/>
+      <rect x="0" y="640" width="1200" height="10" fill="#C4B7A0"/>
+      <g transform="translate(870, 70)">
+        <rect width="200" height="260" fill="#F5EBDD" stroke="#D1C9B8" stroke-width="4" rx="4"/>
+        <rect x="24" y="24" width="152" height="110" fill="#829887" opacity="0.28"/>
+        <circle cx="100" cy="80" r="32" fill="none" stroke="#65717D" stroke-width="2"/>
+        <circle cx="100" cy="80" r="12" fill="#65717D"/>
+        <text x="34" y="170" font-size="15" fill="#4A443D" font-family="Helvetica, Arial, sans-serif">КОМАНДА</text>
+        <text x="34" y="195" font-size="15" fill="#4A443D" font-family="Helvetica, Arial, sans-serif">= РЕЗУЛЬТАТ</text>
+        <line x1="30" y1="210" x2="170" y2="210" stroke="#D1C9B8" stroke-width="2"/>
+      </g>
+      <g transform="translate(20, 320)">
+        <path d="M 8 22 Q 4 42 4 62 L 88 62 Q 88 42 84 22 Q 80 2 70 2 L 22 2 Q 12 2 8 22 Z" fill="#A8D4E8" opacity="0.72" stroke="#8BA8BB" stroke-width="2"/>
+        <path d="M 6 42 L 86 42" stroke="#8BA8BB" stroke-width="1.2" opacity="0.6"/>
+        <rect x="4" y="62" width="84" height="26" fill="#D5D0C5" stroke="#B8B0A0" stroke-width="2"/>
+        <rect x="4" y="88" width="84" height="240" fill="#E8E4DC" stroke="#B8B0A0" stroke-width="2" rx="4"/>
+        <rect x="38" y="120" width="16" height="10" fill="#999"/>
+        <path d="M 46 130 L 46 148" stroke="#999" stroke-width="3" stroke-linecap="round"/>
+        <rect x="92" y="150" width="22" height="100" fill="#F0EDE5" stroke="#B8B0A0" stroke-width="1.5" rx="2"/>
+        <rect x="96" y="156" width="14" height="16" fill="#FFFFFF" stroke="#B8B0A0" stroke-width="1"/>
+        <rect x="96" y="178" width="14" height="16" fill="#FFFFFF" stroke="#B8B0A0" stroke-width="1"/>
+        <rect x="96" y="200" width="14" height="16" fill="#FFFFFF" stroke="#B8B0A0" stroke-width="1"/>
+      </g>
+      <g transform="translate(1130, 500)">
+        <path d="M -22 60 L 22 60 L 16 140 L -16 140 Z" fill="#B96F55"/>
+        <circle cx="0" cy="14" r="30" fill="#829887"/>
+        <circle cx="-20" cy="28" r="22" fill="#6C8071"/>
+        <circle cx="20" cy="28" r="22" fill="#6C8071"/>
+      </g>
+      <g transform="translate(80, 100) scale(0.9)">
+        <use href="#asset-marina" class="char idle" id="char-marina"/>
+      </g>
+      <g transform="translate(370, 100) scale(0.9)">
+        <use href="#asset-igor" class="char idle" id="char-igor"/>
+      </g>
+      <g transform="translate(770, 100) scale(0.9)">
+        <use href="#asset-dasha" class="char idle" id="char-dasha"/>
+      </g>
+    </g>
+  </svg>
+</div>
+
+<script>
+  const subtitlesEl = document.getElementById('subtitles');
+  const subTextEl = document.getElementById('subText');
+  const startScreen = document.getElementById('startScreen');
+  const svgEl = document.getElementById('videoSvg');
+  const ctaOverlay = document.getElementById('ctaOverlay');
+
+  // ── Правщик произношения ──
+  const PRONUNCIATION_FIXES = {
+    'спешит': 'спешИт',
+  };
+  function fixPronunciation(text) {
+    let out = text;
+    for (const [from, to] of Object.entries(PRONUNCIATION_FIXES)) {
+      out = out.split(from).join(to);
+    }
+    return out;
+  }
+
+  const shots = {
+    'boss-medium':    { x: 100, y: 0,   w: 700, h: 700 },
+    'boss-closeup':   { x: 250, y: 30,  w: 450, h: 500 },
+    'cooler-wide':    { x: 0,   y: 0,   w: 1200, h: 800 },
+    'cooler-2shot':   { x: 80,  y: 80,  w: 700, h: 700 },
+    'cooler-dasha':   { x: 780, y: 80,  w: 420, h: 700 },
+    'cooler-3shot':   { x: 60,  y: 40,  w: 1050, h: 760 },
+  };
+
+  let currentCamera = { ...shots['boss-medium'] };
+  let targetCamera = { ...shots['boss-medium'] };
+  let isAnimatingCamera = false;
+
+  function moveCamera(shotName, dur = 1500) {
+    targetCamera = { ...shots[shotName] };
+    if (!isAnimatingCamera) {
+      isAnimatingCamera = true;
+      requestAnimationFrame(animateCamera);
+    }
+  }
+
+  function animateCamera() {
+    const speed = 0.08;
+    let dw = (targetCamera.w - currentCamera.w) * speed;
+    if (Math.abs(dw) > 0.5) {
+      currentCamera.x += (targetCamera.x - currentCamera.x) * speed;
+      currentCamera.y += (targetCamera.y - currentCamera.y) * speed;
+      currentCamera.w += dw;
+      currentCamera.h += (targetCamera.h - currentCamera.h) * speed;
+      svgEl.setAttribute('viewBox', `${currentCamera.x} ${currentCamera.y} ${currentCamera.w} ${currentCamera.h}`);
+      requestAnimationFrame(animateCamera);
+    } else {
+      currentCamera = { ...targetCamera };
+      svgEl.setAttribute('viewBox', `${currentCamera.x} ${currentCamera.y} ${currentCamera.w} ${currentCamera.h}`);
+      isAnimatingCamera = false;
+    }
+  }
+
+  function jumpCamera(shotName) {
+    currentCamera = { ...shots[shotName] };
+    targetCamera = { ...shots[shotName] };
+    svgEl.setAttribute('viewBox', `${currentCamera.x} ${currentCamera.y} ${currentCamera.w} ${currentCamera.h}`);
+    isAnimatingCamera = false;
+  }
+
+  function showScene(id) {
+    document.querySelectorAll('g[id^="scene-"]').forEach(g => g.style.display = 'none');
+    document.getElementById(id).style.display = 'block';
+  }
+
+  function setSubtitle(text) {
+    if (!text) { subtitlesEl.style.opacity = 0; return; }
+    subTextEl.textContent = text;
+    subtitlesEl.style.opacity = 1;
+  }
+
+  function speak(text, gender = 'male') {
+    return new Promise((resolve) => {
+      if (!window.speechSynthesis) { setTimeout(resolve, Math.max(2000, text.length * 70)); return; }
+      const u = new SpeechSynthesisUtterance(fixPronunciation(text));
+      u.lang = 'ru-RU';
+      u.rate = 1.0;
+      u.pitch = gender === 'female' ? 1.25 : 0.85;
+      const voices = window.speechSynthesis.getVoices();
+      const ruVoices = voices.filter(v => v.lang.toLowerCase().startsWith('ru'));
+      if (ruVoices.length > 0) {
+        const pick = ruVoices.find(v => v.name.toLowerCase().includes(gender === 'female' ? 'female' : 'male')) 
+                  || ruVoices.find((_, i) => (i % 2 === 0) === (gender === 'female'))
+                  || ruVoices[0];
+        u.voice = pick;
+      }
+      u.onend = resolve;
+      u.onerror = resolve;
+      window.speechSynthesis.speak(u);
+    });
+  }
+
+  function setCharState(id, state) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.classList.remove('speaking','nodding','hesitating','sighing','idle');
+    if (state) el.classList.add(state);
+    else el.classList.add('idle');
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  async function startVideo() {
+    startScreen.classList.add('hidden');
+    if (window.speechSynthesis) await sleep(100);
+    if (window.speechSynthesis) window.speechSynthesis.getVoices();
+
+    // ─── СЦЕНА 1: Кабинет Шефа ───
+    showScene('scene-office');
+    jumpCamera('boss-medium');
+    await sleep(600);
+
+    setCharState('char-boss', 'speaking');
+    setSubtitle('Итак. К пятнице меняем систему мотивации. Внедряем новый продукт. Вопросы?');
+    await speak('Итак. К пятнице меняем систему мотивации. Внедряем новый продукт. Вопросы?', 'male');
+
+    setCharState('char-boss', 'idle');
+    setSubtitle(null);
+    moveCamera('boss-closeup', 800);
+    await sleep(1400);
+
+    setCharState('char-boss', 'speaking');
+    setSubtitle('Отлично. Значит, все согласны. Работаем.');
+    await speak('Отлично. Значит, все согласны. Работаем.', 'male');
+    setCharState('char-boss', 'idle');
+    setSubtitle(null);
+    await sleep(400);
+
+    // ─── КАТ: СЦЕНА 2 — У кулера ───
+    showScene('scene-cooler');
+    jumpCamera('cooler-wide');
+    await sleep(1400);
+
+    setCharState('char-marina', 'sighing');
+    await sleep(1200);
+    setCharState('char-marina', 'speaking');
+    moveCamera('cooler-2shot', 1200);
+    setSubtitle('Он же несерьёзно? За три дня это не перепишем.');
+    await speak('Он же несерьёзно? За три дня это не перепишем.', 'female');
+    setCharState('char-marina', 'idle');
+    setSubtitle(null);
+    await sleep(300);
+
+    setCharState('char-igor', 'speaking');
+    setSubtitle('Я хотел сказать. Но он же уже всё решил.');
+    await speak('Я хотел сказать. Но он же уже всё решил.', 'male');
+    setCharState('char-igor', 'idle');
+    setSubtitle(null);
+    await sleep(400);
+
+    moveCamera('cooler-dasha', 1400);
+    await sleep(1200);
+    setCharState('char-dasha', 'speaking');
+    setSubtitle('Марина. А почему ты не сказала ему это там? Мы же понимаем, что за три дня это не сделать.');
+    await speak('Марина. А почему ты не сказала ему это там? Мы же понимаем, что за три дня это не сделать.', 'female');
+    setCharState('char-dasha', 'idle');
+    setSubtitle(null);
+    await sleep(500);
+
+    moveCamera('cooler-3shot', 1500);
+    await sleep(1000);
+
+    setCharState('char-marina', 'speaking');
+    setSubtitle('Я... не хотела спорить при всех.');
+    await speak('Я... не хотела спорить при всех.', 'female');
+    setCharState('char-marina', 'idle');
+    setSubtitle(null);
+    await sleep(300);
+
+    setCharState('char-igor', 'speaking');
+    setSubtitle('А я подумал, что меня всё равно не услышат.');
+    await speak('А я подумал, что меня всё равно не услышат.', 'male');
+    setCharState('char-igor', 'idle');
+    setSubtitle(null);
+    await sleep(700);
+
+    moveCamera('cooler-wide', 2500);
+    await sleep(1000);
+
+    // ─── VO: женский голос (архетипы) ───
+    setSubtitle('В каждой команде есть Марина, которая сглаживает углы. Игорь, который видит риски, но боится показаться неудобным. И Шеф, который спешит.');
+    await speak('В каждой команде есть Марина, которая сглаживает углы. Игорь, который видит риски, но боится показаться неудобным. И Шеф, который спешит.', 'female');
+
+    // ─── VO: мужской голос (вывод) ───
+    setSubtitle('Проблема не в том, что они думают по-разному. Проблема — в тишине.');
+    await speak('Проблема не в том, что они думают по-разному. Проблема — в тишине.', 'male');
+    setSubtitle(null);
+    await sleep(500);
+
+    // ─── ФИНАЛ: CTA ───
+    subtitlesEl.style.opacity = 0;
+    ctaOverlay.classList.add('show');
+
+    // Голос дословно повторяет текст на экране
+    await speak('Бизнес Флоу. Фасилитация, которая превращает невысказанные сомнения в работающую стратегию. Давайте услышим друг друга.', 'male');
+
+    // Пауза и оффер — тем же мужским голосом
+    await sleep(300);
+    await speak('Первая сессия бесплатно.', 'male');
+  }
+
+  if (window.speechSynthesis) window.speechSynthesis.getVoices();
+</script>
+</body>
+</html>
