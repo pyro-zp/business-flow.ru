@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Памятка к разговору — Бизнес Флоу</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --graphite: #1E2A32;
+            --sand: #E8DFD3;
+            --sand-light: #F4EFE7;
+            --terracotta: #C96F4A;
+            --terracotta-dark: #B35C38;
+            --terracotta-soft: rgba(201, 111, 74, .08);
+            --text: #1E2A32;
+            --muted: #5C6B75;
+            --line: rgba(30, 42, 50, .14);
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--sand-light);
+            line-height: 1.5;
+            font-size: 13px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+            line-height: 1.2;
+            letter-spacing: -.01em;
+            color: var(--graphite);
+        }
+
+        .sheet {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 24px auto;
+            background: var(--white);
+            padding: 14mm 14mm 10mm;
+            box-shadow: 0 4px 32px rgba(30, 42, 50, .08);
+            border-radius: 2px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 820px) {
+            body { background: var(--white); }
+            .sheet {
+                width: 100%;
+                min-height: auto;
+                margin: 0;
+                padding: 24px 18px;
+                box-shadow: none;
+                border-radius: 0;
+            }
+        }
+
+        /* --- Header --- */
+        .head {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--graphite);
+            margin-bottom: 14px;
+        }
+
+        .eyebrow {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 9px;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 4px;
+        }
+
+        .head h1 {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .head .sub {
+            font-size: 11px;
+            color: var(--muted);
+        }
+
+        .head-brand {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--graphite);
+            white-space: nowrap;
+            padding-top: 4px;
+        }
+
+        .head-brand .mark {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: var(--terracotta);
+            border-radius: 1px;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+
+        /* --- Section --- */
+        .section {
+            margin-bottom: 12px;
+            page-break-inside: avoid;
+        }
+
+        .sec-head {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .sec-num {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 9px;
+            letter-spacing: .14em;
+            color: var(--terracotta);
+        }
+
+        .sec-title {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--graphite);
+        }
+
+        .sec-time {
+            margin-left: auto;
+            font-size: 10px;
+            color: var(--muted);
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+        }
+
+        /* --- Quote block --- */
+        .say {
+            background: var(--sand-light);
+            border-left: 3px solid var(--terracotta);
+            padding: 8px 11px;
+            border-radius: 3px;
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--graphite);
+            margin-bottom: 6px;
+        }
+
+        .say strong { font-weight: 600; }
+
+        .say em {
+            font-style: normal;
+            background: var(--terracotta-soft);
+            padding: 0 2px;
+        }
+
+        /* --- Question list --- */
+        .q-list {
+            list-style: none;
+            margin-bottom: 6px;
+        }
+
+        .q-list li {
+            position: relative;
+            padding: 5px 0 5px 18px;
+            font-size: 12px;
+            line-height: 1.45;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .q-list li:last-child { border-bottom: none; }
+
+        .q-list li::before {
+            content: "?";
+            position: absolute;
+            left: 0;
+            top: 5px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            color: var(--terracotta);
+        }
+
+        /* --- Grid 2 --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+        /* --- Mini cards --- */
+        .mini-card {
+            padding: 8px 10px;
+            border-radius: 3px;
+            border: 1px solid var(--line);
+            font-size: 11.5px;
+            line-height: 1.45;
+        }
+
+        .mini-card.do {
+            background: var(--sand-light);
+            border-left: 3px solid var(--graphite);
+        }
+
+        .mini-card.dont {
+            background: var(--white);
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .mini-card .label {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            color: var(--graphite);
+        }
+
+        .mini-card.dont .label { color: var(--terracotta-dark); }
+
+        .mini-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .mini-card li {
+            position: relative;
+            padding-left: 10px;
+            margin-bottom: 3px;
+        }
+
+        .mini-card li::before {
+            content: "—";
+            position: absolute;
+            left: 0;
+            color: var(--muted);
+        }
+
+        /* --- Objection table --- */
+        .obj-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11.5px;
+            margin-bottom: 4px;
+        }
+
+        .obj-table th {
+            background: var(--graphite);
+            color: var(--white);
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 9.5px;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            padding: 5px 8px;
+            text-align: left;
+        }
+
+        .obj-table th:first-child { border-radius: 3px 0 0 0; width: 32%; }
+        .obj-table th:last-child { border-radius: 0 3px 0 0; }
+
+        .obj-table td {
+            padding: 5px 8px;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+            line-height: 1.4;
+        }
+
+        .obj-table tbody tr:nth-child(even) { background: var(--sand-light); }
+
+        .obj-table td:first-child {
+            font-weight: 600;
+            color: var(--graphite);
+        }
+
+        /* --- Callout --- */
+        .callout {
+            padding: 7px 10px;
+            border-radius: 3px;
+            font-size: 11.5px;
+            line-height: 1.45;
+            margin-bottom: 6px;
+        }
+
+        .callout-dark {
+            background: var(--graphite);
+            color: var(--white);
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .callout-dark .label {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 9px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 3px;
+        }
+
+        .callout-dark strong { color: #fff; }
+
+        /* --- Footer --- */
+        .foot {
+            margin-top: auto;
+            padding-top: 8px;
+            border-top: 1px solid var(--line);
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 10px;
+            color: var(--muted);
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .foot .foot-brand {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 10px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--graphite);
+        }
+
+        .foot .foot-brand .mark {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--terracotta);
+            border-radius: 1px;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: #fff; }
+            .sheet {
+                width: 210mm;
+                min-height: 297mm;
+                margin: 0;
+                padding: 12mm 12mm 8mm;
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sheet">
+
+    <!-- HEAD -->
+    <header class="head">
+        <div>
+            <div class="eyebrow">Памятка ведущего</div>
+            <h1>Разговор с клиентом</h1>
+            <div class="sub">15–20 минут · структура и опорные фразы</div>
+        </div>
+        <div class="head-brand"><span class="mark"></span>Бизнес Флоу</div>
+    </header>
+
+    <!-- 1. КОНТЕКСТ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">01</span>
+            <span class="sec-title">Контекст</span>
+            <span class="sec-time">~1 мин</span>
+        </div>
+        <div class="say">
+            «Коротко о себе: я работаю с коммуникацией внутри бизнеса. Не тренинги и не стратегические сессии — я <em>помогаю увидеть</em>, где в культуре общения возникают заторы: когда обсуждают проблемы, когда передают указания, когда получают обратную связь. Из-за этих заторов решения буксуют, а проблемы возвращаются. Задача — расчистить эти места, чтобы эффект накапливался».
+        </div>
+        <div class="say" style="border-left-color: var(--graphite); background: var(--white); border: 1px solid var(--line);">
+            <strong>Почему именно вы:</strong> «Я знаю вашу ситуацию / видел, как это устроено у [контекст] — и мне кажется, у вас есть что разобрать».
+        </div>
+    </div>
+
+    <!-- 2. ВОПРОСЫ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">02</span>
+            <span class="sec-title">Три вопроса-пробы</span>
+            <span class="sec-time">~7 мин</span>
+        </div>
+        <ul class="q-list">
+            <li><strong>Обсуждение проблем:</strong> «Когда в компании всплывает сложная проблема — она обсуждается открыто, или её сначала «готовят», а на общее выносят уже с решением?»</li>
+            <li><strong>Передача указаний:</strong> «Когда вы ставите задачу — как вы понимаете, что до исполнителя дошло именно то, что вы имели в виду? Бывает, что на выходе получается не то?»</li>
+            <li><strong>Обратная связь:</strong> «А обратная связь снизу вверх — она есть? Или люди предпочитают не говорить, если что-то не так?»</li>
+        </ul>
+        <div class="callout callout-dark">
+            <div class="label">Если человек говорит «у нас всё нормально»</div>
+            Не спорьте. Спросите: <strong>«А что бы вы хотели, чтобы в коммуникации работало иначе?»</strong> Если и тут пусто — вежливо закругляйтесь, это не ваш клиент.
+        </div>
+        <div class="callout callout-dark">
+            <div class="label">Что делать после каждого ответа</div>
+            Уточняйте: <strong>«А в чём это выражается? Приведите пример»</strong>. Один живой пример стоит десяти абстракций.
+        </div>
+    </div>
+
+    <!-- 3. МИНИ-ДИАГНОЗ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">03</span>
+            <span class="sec-title">Мини-диагноз</span>
+            <span class="sec-time">~3 мин</span>
+        </div>
+        <div class="say">
+            «Смотрите, что я услышал. У вас проблема [X] обсуждается не на общем столе, а сначала «готовится» в узком кругу — значит, команда видит только финальную версию. Указания передаются через [механизм], и на выходе бывает [искажение]. А обратная связь почти не идёт, потому что [причина]. <strong>Это и есть те заторы, о которых я говорю. Они не про людей — они про культуру коммуникации. И они накапливаются: каждая недоговорённость делает следующую ещё дороже.</strong>»
+        </div>
+    </div>
+
+    <!-- 4. ПРЕДЛОЖЕНИЕ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">04</span>
+            <span class="sec-title">Предложение</span>
+            <span class="sec-time">~2 мин</span>
+        </div>
+        <div class="say">
+            «Я предлагаю провести с вашей командой <strong>диагностическую сессию — 3–4 часа</strong>. Разберём, как устроена коммуникация по этим трём зонам. На выходе у вас будет <strong>карта заторов</strong> — где именно ломается и почему. Не «давайте лучше общаться», а конкретно: вот здесь теряется, вот здесь искажается, вот здесь не возвращается.
+            <br><br>
+            Стоимость — <strong>90 тысяч за сессию</strong>. Если решите, что хотите не только увидеть, но и расчистить — есть <strong>программа на месяц, 300 тысяч</strong>: работа по изменению паттернов, с накопительным эффектом».
+        </div>
+    </div>
+
+    <!-- 5. ЗАКРЫТИЕ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">05</span>
+            <span class="sec-title">Закрытие</span>
+            <span class="sec-time">~1 мин</span>
+        </div>
+        <div class="say">
+            «Что думаете? Если интересно — я пришлю короткое описание, вы посмотрите. <strong>Если нет — тоже нормально, скажите прямо</strong>».
+        </div>
+        <div class="callout callout-dark">
+            <div class="label">Ключевая фраза</div>
+            <strong>«Скажите прямо»</strong> снимает давление и парадоксально повышает согласие. Не уговаривайте.
+        </div>
+    </div>
+
+    <!-- 6. ВОЗРАЖЕНИЯ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">06</span>
+            <span class="sec-title">Возражения</span>
+        </div>
+        <table class="obj-table">
+            <thead>
+                <tr>
+                    <th>Возражение</th>
+                    <th>Что отвечать</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>«А у вас есть кейсы?»</td>
+                    <td>«Честно: я в начале пути, кейсов пока мало. Поэтому и предлагаю формат, где вы сначала видите результат диагностики, а не покупаете кота в мешке. Если на сессии не увидите заторов — я не буду настаивать на продолжении».</td>
+                </tr>
+                <tr>
+                    <td>«У нас нет проблемы с коммуникацией»</td>
+                    <td>«Возможно. Но вы сказали, что [их же слова]. Это же не про людей — это про то, как устроен обмен информацией. Можем проверить на одной сессии: если не покажу ничего нового, вы ничего не теряете, кроме 4 часов».</td>
+                </tr>
+                <tr>
+                    <td>«Дорого»</td>
+                    <td>«90 тысяч за 4 часа с командой из 12 человек — меньше, чем стоимость одного совещания, после которого ничего не меняется. И вы получаете не отчёт, а карту, с которой можно работать».</td>
+                </tr>
+                <tr>
+                    <td>«Нам это не нужно»</td>
+                    <td>«Понял. Если передумаете или у кого-то из знакомых похожая ситуация — буду благодарен за контакт». <em>Отказ часто даёт рекомендацию.</em></td>
+                </tr>
+                <tr>
+                    <td>«Давайте бесплатно»</td>
+                    <td>«Бесплатно — значит, ни вы, ни команда не вовлекаетесь. Я беру цену именно чтобы была ответственность с обеих сторон. Могу сделать диагностику дешевле, но сессию — только платно».</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 7. ЧЕГО НЕ ГОВОРИТЬ -->
+    <div class="section">
+        <div class="sec-head">
+            <span class="sec-num">07</span>
+            <span class="sec-title">Чего не говорить</span>
+        </div>
+        <div class="grid-2">
+            <div class="mini-card dont">
+                <div class="label">Не говорить</div>
+                <ul>
+                    <li>«Я начинающий, поэтому дёшево»</li>
+                    <li>«Ну, попробуем, вдруг получится»</li>
+                    <li>«У меня нет опыта, но я очень хочу»</li>
+                    <li>«Скидка только сегодня»</li>
+                    <li>Длинных монологов про метод</li>
+                </ul>
+            </div>
+            <div class="mini-card do">
+                <div class="label">Говорить</div>
+                <ul>
+                    <li>«Я помогаю увидеть»</li>
+                    <li>«Карта — ваша, я только фиксирую»</li>
+                    <li>«Если нет — скажите прямо»</li>
+                    <li>«Не про людей, а про то, как устроен обмен»</li>
+                    <li>«Эффект накапливается»</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="foot">
+        <div class="foot-brand"><span class="mark"></span>Бизнес Флоу</div>
+        <div>Илья Соловьёв · business-flow.ru · +7 993 634-76-82</div>
+    </footer>
+
+</div>
+
+</body>
+</html>
