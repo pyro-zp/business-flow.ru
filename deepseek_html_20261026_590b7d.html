@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сценарий диагностической сессии — Бизнес Флоу</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --graphite: #1E2A32;
+            --sand: #E8DFD3;
+            --sand-light: #F4EFE7;
+            --terracotta: #C96F4A;
+            --terracotta-dark: #B35C38;
+            --terracotta-soft: rgba(201, 111, 74, .1);
+            --text: #1E2A32;
+            --muted: #5C6B75;
+            --line: rgba(30, 42, 50, .12);
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--sand-light);
+            line-height: 1.6;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+            line-height: 1.2;
+            letter-spacing: -.02em;
+            color: var(--graphite);
+        }
+
+        /* --- Layout --- */
+        .layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            min-height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 960px) {
+            .layout { grid-template-columns: 1fr; }
+            .sidebar { position: static !important; height: auto !important; border-right: none !important; border-bottom: 1px solid var(--line); }
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            background: var(--graphite);
+            color: var(--white);
+            padding: 40px 28px;
+            border-right: 1px solid var(--line);
+        }
+
+        .sidebar .brand {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 8px;
+        }
+
+        .sidebar .doc-title {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 20px;
+            line-height: 1.25;
+            margin-bottom: 32px;
+            color: var(--white);
+        }
+
+        .nav-list {
+            list-style: none;
+            border-top: 1px solid rgba(255,255,255,.1);
+        }
+
+        .nav-list li {
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+        .nav-list a {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            padding: 14px 4px;
+            color: rgba(255,255,255,.75);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color .15s, padding-left .15s;
+        }
+
+        .nav-list a:hover {
+            color: var(--terracotta);
+            padding-left: 8px;
+        }
+
+        .nav-list .num {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            color: var(--terracotta);
+            letter-spacing: .1em;
+            min-width: 20px;
+        }
+
+        .nav-list .time {
+            margin-left: auto;
+            font-size: 12px;
+            color: rgba(255,255,255,.4);
+        }
+
+        /* --- Main --- */
+        .main {
+            padding: 56px 64px 80px;
+            background: var(--white);
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        @media (max-width: 960px) {
+            .main { padding: 32px 24px 48px; }
+        }
+
+        /* --- Header --- */
+        .page-header {
+            padding-bottom: 32px;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--graphite);
+        }
+
+        .page-header .eyebrow {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 12px;
+        }
+
+        .page-header h1 {
+            font-size: clamp(28px, 4vw, 40px);
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .page-header .lead {
+            font-size: 18px;
+            color: var(--muted);
+            max-width: 640px;
+        }
+
+        .meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--line);
+        }
+
+        .meta-item .label {
+            font-size: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            margin-bottom: 4px;
+        }
+
+        .meta-item .value {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--graphite);
+        }
+
+        /* --- Section --- */
+        section {
+            margin-bottom: 56px;
+            scroll-margin-top: 24px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+        }
+
+        .badge {
+            display: inline-block;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 3px;
+            letter-spacing: .04em;
+            white-space: nowrap;
+        }
+
+        .badge-time {
+            background: var(--graphite);
+            color: var(--white);
+        }
+
+        .badge-accent {
+            background: var(--terracotta);
+            color: var(--white);
+        }
+
+        .badge-soft {
+            background: var(--sand);
+            color: var(--graphite);
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-top: 28px;
+            margin-bottom: 12px;
+            color: var(--graphite);
+        }
+
+        h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-top: 20px;
+            margin-bottom: 8px;
+            color: var(--graphite);
+            text-transform: uppercase;
+            letter-spacing: .04em;
+        }
+
+        p { margin-bottom: 14px; }
+
+        ul, ol {
+            margin-bottom: 16px;
+            padding-left: 22px;
+        }
+
+        li { margin-bottom: 8px; }
+
+        /* --- Question card --- */
+        .question {
+            background: var(--sand-light);
+            border-left: 4px solid var(--terracotta);
+            padding: 20px 24px;
+            border-radius: 4px;
+            margin: 16px 0 20px;
+            font-size: 17px;
+            line-height: 1.55;
+            color: var(--graphite);
+        }
+
+        .question strong { font-weight: 700; }
+
+        .question .q-label {
+            display: block;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 8px;
+        }
+
+        /* --- Callout --- */
+        .callout {
+            padding: 18px 22px;
+            border-radius: 4px;
+            margin: 20px 0;
+            font-size: 15px;
+            line-height: 1.55;
+        }
+
+        .callout .callout-label {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .callout-warning {
+            background: var(--terracotta-soft);
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .callout-warning .callout-label { color: var(--terracotta-dark); }
+
+        .callout-info {
+            background: var(--sand-light);
+            border-left: 3px solid var(--graphite);
+        }
+
+        .callout-info .callout-label { color: var(--graphite); }
+
+        .callout-dark {
+            background: var(--graphite);
+            color: var(--white);
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .callout-dark .callout-label { color: var(--terracotta); }
+        .callout-dark strong { color: #fff; }
+
+        /* --- Two-column roles --- */
+        .roles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 640px) { .roles { grid-template-columns: 1fr; } }
+
+        .role-card {
+            padding: 20px;
+            border-radius: 4px;
+            border: 1px solid var(--line);
+        }
+
+        .role-card.do {
+            background: var(--sand-light);
+            border-left: 3px solid var(--graphite);
+        }
+
+        .role-card.dont {
+            background: #fff;
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .role-card h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+
+        .role-card ul {
+            margin-bottom: 0;
+            padding-left: 18px;
+            font-size: 14px;
+        }
+
+        .role-card li { margin-bottom: 6px; }
+
+        /* --- Table --- */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        .compare-table th {
+            background: var(--graphite);
+            color: var(--white);
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: .04em;
+        }
+
+        .compare-table th:first-child { border-radius: 4px 0 0 0; }
+        .compare-table th:last-child { border-radius: 0 4px 0 0; }
+
+        .compare-table tbody tr:nth-child(even) { background: var(--sand-light); }
+
+        .compare-table td:first-child {
+            font-weight: 600;
+            color: var(--graphite);
+        }
+
+        /* --- Timeline block --- */
+        .block-card {
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 24px 28px;
+            margin-bottom: 24px;
+            background: #fff;
+        }
+
+        .block-card .block-head {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .block-card .block-head h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 800;
+        }
+
+        /* --- Step --- */
+        .step {
+            margin-bottom: 20px;
+            padding-left: 16px;
+            border-left: 2px solid var(--line);
+        }
+
+        .step-title {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .step-title .step-time {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 12px;
+            color: var(--terracotta);
+        }
+
+        .step-title h4 {
+            margin: 0;
+            text-transform: none;
+            letter-spacing: 0;
+            font-size: 15px;
+            color: var(--graphite);
+        }
+
+        /* --- Print --- */
+        @media print {
+            body { background: #fff; }
+            .layout { display: block; }
+            .sidebar { display: none; }
+            .main { padding: 20px; }
+            section { page-break-inside: avoid; }
+            .block-card { page-break-inside: avoid; }
+        }
+
+        /* --- Anchors offset --- */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="brand">Бизнес Флоу</div>
+        <div class="doc-title">Сценарий диагностической сессии</div>
+        <ul class="nav-list">
+            <li><a href="#prep"><span class="num">00</span> Подготовка <span class="time">—</span></a></li>
+            <li><a href="#block0"><span class="num">01</span> Вступление <span class="time">15 мин</span></a></li>
+            <li><a href="#block1"><span class="num">02</span> Обсуждение проблем <span class="time">45 мин</span></a></li>
+            <li><a href="#block2"><span class="num">03</span> Передача указаний <span class="time">45 мин</span></a></li>
+            <li><a href="#block3"><span class="num">04</span> Обратная связь <span class="time">45 мин</span></a></li>
+            <li><a href="#block4"><span class="num">05</span> Сборка карты <span class="time">30 мин</span></a></li>
+            <li><a href="#block5"><span class="num">06</span> Договорённости <span class="time">20 мин</span></a></li>
+            <li><a href="#after"><span class="num">07</span> После сессии <span class="time">—</span></a></li>
+            <li><a href="#compare"><span class="num">08</span> Отличие от классики <span class="time">—</span></a></li>
+            <li><a href="#risk"><span class="num">09</span> Риск ведущего <span class="time">—</span></a></li>
+        </ul>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- Header -->
+        <header class="page-header">
+            <div class="eyebrow">Рабочий документ фасилитатора</div>
+            <h1>Сценарий диагностической сессии</h1>
+            <p class="lead">Формат на 3–4 часа для команды 8–15 человек. Логика: не приношу готовую карту — помогаю команде построить её самой и присвоить результат.</p>
+            <div class="meta-row">
+                <div class="meta-item">
+                    <div class="label">Длительность</div>
+                    <div class="value">3–4 часа</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">Размер группы</div>
+                    <div class="value">8–15 человек</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">Зоны</div>
+                    <div class="value">3</div>
+                </div>
+                <div class="meta-item">
+                    <div class="label">Стоимость</div>
+                    <div class="value">90 000 ₽</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- PREP -->
+        <section id="prep">
+            <div class="section-header">
+                <h2>Подготовка до сессии</h2>
+                <span class="badge badge-time">—</span>
+            </div>
+
+            <div class="roles">
+                <div class="role-card do">
+                    <h4>Что готовит ведущий</h4>
+                    <ul>
+                        <li>Флипчарт или большая доска</li>
+                        <li>3 листа разного цвета (три зоны)</li>
+                        <li>Стикеры двух цветов — «факт» и «предположение»</li>
+                        <li>Маркеры, скотч</li>
+                    </ul>
+                </div>
+                <div class="role-card dont">
+                    <h4>Чего ведущий НЕ готовит</h4>
+                    <ul>
+                        <li>Готовую карту заторов</li>
+                        <li>Презентацию с «типичными проблемами»</li>
+                        <li>Список рекомендаций</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="callout callout-info">
+                <div class="callout-label">Правило</div>
+                Всё, что появится на доске, должно быть <strong>словами участников</strong>, а не словами ведущего.
+            </div>
+
+            <h3>Что нужно от клиента</h3>
+            <ul>
+                <li>Команда 8–15 человек, включая руководителя</li>
+                <li>3–4 часа без «срочных звонков» (один перерыв на кофе — ок)</li>
+                <li>Согласие на правило: говорим от первого лица и про конкретные случаи, не про людей</li>
+            </ul>
+        </section>
+
+        <!-- BLOCK 0 -->
+        <section id="block0">
+            <div class="section-header">
+                <h2>Вступление</h2>
+                <span class="badge badge-time">15 минут</span>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">0.1</span>
+                    <h3>Рамка</h3>
+                    <span class="badge badge-soft">5 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Что сказать</span>
+                    Спасибо, что собрались. Сразу обозначу, что здесь будет происходить — и чего не будет.<br><br>
+                    Я не буду учить вас управлять и не буду принимать решения за вас. Лучше, чем вы сами, ваш бизнес не знает никто. Моя задача другая: <strong>помочь вам увидеть</strong>, где в коммуникации компании образуется муть — когда обсуждают проблемы, когда передают указания, когда возвращают обратную связь.<br><br>
+                    Важно, чтобы это увидели вы, а не я. Если диагноз принесу я — он уйдёт вместе со мной. Если увидите вы — останется. Поэтому я буду задавать вопросы и записывать то, что вы скажете. Карта, которая появится на доске, — ваша, не моя.
+                </div>
+
+                <h4>Три правила на сегодня</h4>
+                <ol>
+                    <li>Говорим про <strong>конкретные случаи</strong>, а не про людей. Не «Петров не слышит», а «был случай, когда задача вернулась не той».</li>
+                    <li>Говорим <strong>от первого лица</strong>: «я вижу», «я не понял», «я не сказал».</li>
+                    <li>То, что здесь прозвучит, <strong>остаётся здесь</strong>. Мы не выносим цитаты за пределы комнаты.</li>
+                </ol>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">0.2</span>
+                    <h3>Разогрев</h3>
+                    <span class="badge badge-soft">10 мин</span>
+                </div>
+
+                <p>Цель — снять формальность и перевести людей в режим «говорить честно».</p>
+
+                <div class="question">
+                    <span class="q-label">Вопрос каждому</span>
+                    Вспомните <strong>один случай за последние 2–3 месяца</strong>, когда вы поняли: «вот здесь у нас что-то сломалось в общении». Не проблему целиком — именно момент, когда вы это заметили. Одно предложение. Начнём с [имя].
+                </div>
+
+                <div class="callout callout-info">
+                    <div class="callout-label">Что делает ведущий</div>
+                    Записывает на доске <strong>ключевые слова</strong> из каждого ответа, не интерпретируя. Это заготовка для карты.
+                </div>
+
+                <div class="callout callout-warning">
+                    <div class="callout-label">Если говорят «у нас всё нормально»</div>
+                    Не спорьте. «Хорошо, а что бы вы хотели, чтобы работало иначе?» Если и тут пусто — «Ок, послушаем остальных, может, откликнется».
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 1 -->
+        <section id="block1">
+            <div class="section-header">
+                <h2>Зона 1. Обсуждение проблем</h2>
+                <span class="badge badge-time">45 минут</span>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">1.1</span>
+                    <h3>Вопрос-затравка</h3>
+                    <span class="badge badge-soft">5 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Первая зона — как у вас обсуждаются сложные проблемы. Не задачи, не планы — именно проблемы, когда что-то идёт не так.<br><br>
+                    Вопрос: <strong>когда в компании всплывает сложная проблема — она обсуждается открыто, или её сначала «готовят» в узком кругу, а на общее выносят уже с решением?</strong> Приведите конкретный пример за последние месяцы.
+                </div>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">1.2</span>
+                    <h3>Работа с примерами</h3>
+                    <span class="badge badge-soft">25 мин</span>
+                </div>
+
+                <h4>Уточняющие вопросы</h4>
+                <ul>
+                    <li>А что произошло дальше?</li>
+                    <li>А как вы поняли, что проблема есть?</li>
+                    <li>А кто ещё об этом знал?</li>
+                    <li>А если бы вы сказали об этом сразу — что было бы?</li>
+                </ul>
+
+                <div class="roles">
+                    <div class="role-card do">
+                        <h4>Что делает ведущий</h4>
+                        <ul>
+                            <li>Даёт высказаться 3–4 людям</li>
+                            <li>Задаёт уточняющие вопросы, не оценивая</li>
+                            <li>Записывает на доске <strong>дословно</strong>: «боятся говорить, потому что потом будет разбор»</li>
+                        </ul>
+                    </div>
+                    <div class="role-card dont">
+                        <h4>Чего ведущий не делает</h4>
+                        <ul>
+                            <li>Не говорит «это типовая проблема»</li>
+                            <li>Не обобщает за участников</li>
+                            <li>Не предлагает решений</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">1.3</span>
+                    <h3>Сборка зоны</h3>
+                    <span class="badge badge-soft">15 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Смотрите, что мы услышали. <em>[Читает записи с доски.]</em> Это то, что вы назвали. Я ничего не добавлял. Вопрос: <strong>это про людей или про то, как устроен обмен информацией?</strong>
+                </div>
+
+                <div class="callout callout-info">
+                    <div class="callout-label">Цель блока</div>
+                    Команда <strong>сама</strong> формулирует вывод. Ведущий только фиксирует.
+                </div>
+
+                <div class="callout callout-dark">
+                    <div class="callout-label">Результат</div>
+                    На доске — список конкретных проявлений (3–7 пунктов), сформулированных участниками. Это первая часть карты.
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 2 -->
+        <section id="block2">
+            <div class="section-header">
+                <h2>Зона 2. Передача указаний</h2>
+                <span class="badge badge-time">45 минут</span>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">2.1</span>
+                    <h3>Вопрос-затравка</h3>
+                    <span class="badge badge-soft">5 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Вторая зона — как задачи и решения доходят до исполнителей. Вопрос: <strong>бывает ли так, что на выходе получается не то, что задумывалось?</strong> Не «иногда», а как паттерн. Приведите пример: что ставили — что получили.
+                </div>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">2.2</span>
+                    <h3>Работа с примерами</h3>
+                    <span class="badge badge-soft">25 мин</span>
+                </div>
+
+                <h4>Уточняющие вопросы</h4>
+                <ul>
+                    <li>А на каком этапе, по-вашему, смысл потерялся?</li>
+                    <li>А исполнитель понял иначе — или не захотел уточнить?</li>
+                    <li>А вы проверяли, как он понял, до того, как он начал?</li>
+                    <li>А если бы он переспросил — это было бы нормально?</li>
+                </ul>
+
+                <div class="callout callout-warning">
+                    <div class="callout-label">Сильный ход</div>
+                    Если в комнате есть и руководители, и исполнители — попросите обе стороны привести пример <strong>одной и той же</strong> задачи. Часто выясняется, что «я всё объяснил» и «мне не объяснили» — про один и тот же случай. Это момент, когда команда <strong>в реальном времени видит</strong> затор, а не слышит про него.
+                </div>
+
+                <h4>Что фиксировать на доске</h4>
+                <ul>
+                    <li>«не переспрашивают, потому что «должен сам догадаться»»</li>
+                    <li>«задача идёт через три человека и обрастает»</li>
+                    <li>«проверяем только результат, не понимание»</li>
+                </ul>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">2.3</span>
+                    <h3>Сборка зоны</h3>
+                    <span class="badge badge-soft">15 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Что здесь общего? Вы назвали <em>[перечисляет]</em>. Это про то, что кто-то плохо работает — или про то, что между постановкой и исполнением нет обратной связи?
+                </div>
+
+                <div class="callout callout-dark">
+                    <div class="callout-label">Результат</div>
+                    Вторая часть карты — 3–7 пунктов, сформулированных командой.
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 3 -->
+        <section id="block3">
+            <div class="section-header">
+                <h2>Зона 3. Обратная связь</h2>
+                <span class="badge badge-time">45 минут</span>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">3.1</span>
+                    <h3>Вопрос-затравка</h3>
+                    <span class="badge badge-soft">5 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Третья зона — обратная связь снизу вверх. Вопрос: <strong>руководитель узнаёт о проблеме раньше или позже, чем она становится критичной?</strong> И бывает ли так, что сигналы были, но их не услышали?
+                </div>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">3.2</span>
+                    <h3>Работа с примерами</h3>
+                    <span class="badge badge-soft">25 мин</span>
+                </div>
+
+                <h4>Уточняющие вопросы</h4>
+                <ul>
+                    <li>А почему не сказали сразу?</li>
+                    <li>А что было бы, если бы сказали?</li>
+                    <li>А кто-то говорил — и что с ним стало?</li>
+                    <li>А на вопрос «как дела?» что обычно отвечают?</li>
+                </ul>
+
+                <h4>Что фиксировать на доске</h4>
+                <ul>
+                    <li>«говорят «нормально», потому что страшно»</li>
+                    <li>«сигналы есть, но их не слышат, потому что «не по форме»»</li>
+                    <li>«руководитель узнаёт последним, потому что боятся расстроить»</li>
+                </ul>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">3.3</span>
+                    <h3>Сборка зоны</h3>
+                    <span class="badge badge-soft">15 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Вы назвали <em>[перечисляет]</em>. Это про то, что люди плохие, — или про то, что канал обратной связи не работает как система?
+                </div>
+
+                <div class="callout callout-dark">
+                    <div class="callout-label">Результат</div>
+                    Третья часть карты — 3–7 пунктов, сформулированных командой.
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 4 -->
+        <section id="block4">
+            <div class="section-header">
+                <h2>Сборка карты</h2>
+                <span class="badge badge-time">30 минут</span>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">4.1</span>
+                    <h3>Визуализация</h3>
+                    <span class="badge badge-soft">15 мин</span>
+                </div>
+
+                <p>Ведущий перерисовывает три колонки на одном большом листе — <strong>своими руками, но словами участников</strong>. Подписывает каждую зону.</p>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Вот карта, которую вы построили. Я только записывал. Посмотрите: это <strong>ваша</strong> карта. Вопрос: что здесь самое дорогое для бизнеса? Где вы теряете больше всего — в скорости, в деньгах, в качестве решений?
+                </div>
+
+                <div class="callout callout-info">
+                    <div class="callout-label">Цель</div>
+                    Команда <strong>сама</strong> расставляет приоритеты. Ведущий не выбирает за них.
+                </div>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">4.2</span>
+                    <h3>Проверка на «своё»</h3>
+                    <span class="badge badge-soft">15 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос команде</span>
+                    Сейчас важный момент. Карта — ваша. Но увидеть — это половина. Вторая половина — <strong>присвоить</strong>. Вопрос каждому: что из этой карты вы <strong>лично</strong> узнаёте как своё? Не «у нас так», а «я в этом участвую». Один пункт от каждого.
+                </div>
+
+                <div class="callout callout-warning">
+                    <div class="callout-label">Что происходит</div>
+                    Люди начинают говорить «я тоже так делаю», «я не переспрашиваю», «я говорю «нормально»». Это и есть присвоение — момент, когда карта перестаёт быть «диагнозом консультанта» и становится «нашей картиной».
+                </div>
+
+                <div class="callout callout-info">
+                    <div class="callout-label">Действие ведущего</div>
+                    Фиксирует эти признания на <strong>отдельном листе</strong> (не на карте) — это заготовка для следующих шагов.
+                </div>
+            </div>
+        </section>
+
+        <!-- BLOCK 5 -->
+        <section id="block5">
+            <div class="section-header">
+                <h2>Договорённости о следующем шаге</h2>
+                <span class="badge badge-time">20 минут</span>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">5.1</span>
+                    <h3>Что дальше</h3>
+                    <span class="badge badge-soft">10 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Что сказать</span>
+                    Карта у вас есть. Дальше — два пути. Первый: вы уносите её и работаете с ней сами. Это нормально, и иногда этого достаточно. Второй: мы вместе разбираем, <strong>как расчистить эти места</strong> — но уже не в формате диагностики, а в формате работы: месяц, несколько встреч, изменение паттернов.<br><br>
+                    Решение за вами. Не сегодня — сегодня просто посмотрите на карту и скажите: есть ли здесь то, с чем вы хотите работать дальше?
+                </div>
+
+                <div class="callout callout-warning">
+                    <div class="callout-label">Важно</div>
+                    Не продавайте. Не называйте цену в комнате, если не спросят. Дайте людям уйти с картой и мыслью.
+                </div>
+            </div>
+
+            <div class="block-card">
+                <div class="block-head">
+                    <span class="badge badge-accent">5.2</span>
+                    <h3>Фиксация</h3>
+                    <span class="badge badge-soft">10 мин</span>
+                </div>
+
+                <div class="question">
+                    <span class="q-label">Вопрос каждому</span>
+                    Каждый из вас забирает с собой <strong>один пункт</strong> из карты — тот, который лично для вас самый болезненный. Не для компании — для вас. И один вопрос, который вы зададите себе на этой неделе: <strong>что я могу сделать иначе уже завтра, чтобы этот затор не повторялся?</strong><br><br>
+                    Записывать не надо. Просто подумайте. Через неделю я напишу каждому — спрошу, что изменилось. Это не проверка. Это чтобы карта не осталась на доске.
+                </div>
+            </div>
+        </section>
+
+        <!-- AFTER -->
+        <section id="after">
+            <div class="section-header">
+                <h2>После сессии</h2>
+                <span class="badge badge-time">—</span>
+            </div>
+
+            <div class="block-card">
+                <h4>В тот же день</h4>
+                <p>Ведущий отправляет <strong>фотографию карты</strong> (не отчёт, не презентацию — фото доски) с одной строкой: «Это ваша карта. Спасибо за работу».</p>
+
+                <h4>Через неделю</h4>
+                <p>Короткое сообщение каждому участнику: «Прошла неделя. Что изменилось? Один пункт — достаточно». Это не продажа, это <strong>удержание взгляда</strong>.</p>
+
+                <h4>Через две недели</h4>
+                <p>Если есть запрос — разговор о следующем шаге (программа на месяц). Если нет — карта остаётся у них, и это тоже результат.</p>
+            </div>
+        </section>
+
+        <!-- COMPARE -->
+        <section id="compare">
+            <div class="section-header">
+                <h2>Чем отличается от классической диагностики</h2>
+                <span class="badge badge-time">—</span>
+            </div>
+
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>Классическая диагностика</th>
+                        <th>Этот сценарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Консультант приносит готовую карту</td>
+                        <td>Команда строит карту сама, консультант фиксирует</td>
+                    </tr>
+                    <tr>
+                        <td>Консультант ставит диагноз</td>
+                        <td>Команда сама формулирует выводы</td>
+                    </tr>
+                    <tr>
+                        <td>Результат — отчёт</td>
+                        <td>Результат — доска, которую они узнают как свою</td>
+                    </tr>
+                    <tr>
+                        <td>Эффект уходит с консультантом</td>
+                        <td>Эффект остаётся, потому что присвоен</td>
+                    </tr>
+                    <tr>
+                        <td>Консультант — эксперт</td>
+                        <td>Консультант — зеркало и угол</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- RISK -->
+        <section id="risk">
+            <div class="section-header">
+                <h2>Риск ведущего</h2>
+                <span class="badge badge-time">—</span>
+            </div>
+
+            <div class="callout callout-warning">
+                <div class="callout-label">Главное правило</div>
+                Сценарий работает только если вы <strong>действительно не приносите готовых ответов</strong>. Один соблазн — «подсказать» команде правильную формулировку — и присвоение ломается: карта снова становится вашей.
+            </div>
+
+            <div class="callout callout-dark">
+                <div class="callout-label">Что делать, если команда молчит</div>
+                Задайте <strong>ещё один вопрос</strong>, а не дайте ответ. Пауза работает лучше подсказки.
+            </div>
+        </section>
+
+    </main>
+</div>
+
+</body>
+</html>
