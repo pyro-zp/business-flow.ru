@@ -28,7 +28,7 @@
 ## Основные страницы
 
 - https://business-flow.ru — главная
-- https://business-flow.ru/quiz — квиз-самодиагностика
+- https://business-flow.ru/quiz.html — квиз-самодиагностика
 
 ## Что агентам можно
 
