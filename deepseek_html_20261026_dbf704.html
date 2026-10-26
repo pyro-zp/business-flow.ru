@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностическая сессия — слайды для ведущего</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --graphite: #1E2A32;
+            --sand: #E8DFD3;
+            --sand-light: #F4EFE7;
+            --terracotta: #C96F4A;
+            --terracotta-dark: #B35C38;
+            --terracotta-soft: rgba(201, 111, 74, .12);
+            --text: #1E2A32;
+            --muted: #5C6B75;
+            --line: rgba(30, 42, 50, .14);
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--graphite);
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+            line-height: 1.15;
+            letter-spacing: -.02em;
+            color: var(--graphite);
+        }
+
+        /* --- Deck --- */
+        .deck {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 8vh 10vw;
+            background: var(--white);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(40px);
+            transition: opacity .35s ease, transform .35s ease, visibility .35s;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+            z-index: 2;
+        }
+
+        .slide.prev {
+            transform: translateX(-40px);
+        }
+
+        /* --- Slide types --- */
+        .slide-title {
+            background: var(--graphite);
+            color: var(--white);
+        }
+
+        .slide-title h1 {
+            color: var(--white);
+        }
+
+        .slide-title .eyebrow {
+            color: var(--terracotta);
+        }
+
+        .slide-title .sub {
+            color: rgba(255,255,255,.65);
+        }
+
+        .slide-zone {
+            background: var(--sand-light);
+        }
+
+        .slide-result {
+            background: var(--graphite);
+        }
+
+        .slide-result h2,
+        .slide-result .result-label {
+            color: var(--white);
+        }
+
+        .slide-result .result-placeholder {
+            background: rgba(255,255,255,.06);
+            border: 2px dashed rgba(255,255,255,.2);
+            color: rgba(255,255,255,.5);
+        }
+
+        /* --- Content --- */
+        .eyebrow {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: clamp(11px, 1.1vw, 14px);
+            letter-spacing: .18em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 1.5vh;
+        }
+
+        .slide h1 {
+            font-size: clamp(32px, 5vw, 64px);
+            font-weight: 800;
+            margin-bottom: 2vh;
+        }
+
+        .slide h2 {
+            font-size: clamp(26px, 3.6vw, 46px);
+            font-weight: 800;
+            margin-bottom: 3vh;
+        }
+
+        .slide .sub {
+            font-size: clamp(15px, 1.6vw, 22px);
+            color: var(--muted);
+            max-width: 70%;
+            line-height: 1.5;
+        }
+
+        .slide .big-question {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: clamp(22px, 3vw, 40px);
+            line-height: 1.35;
+            color: var(--graphite);
+            max-width: 85%;
+            margin-bottom: 4vh;
+        }
+
+        .slide .big-question em {
+            font-style: normal;
+            color: var(--terracotta);
+        }
+
+        .slide .hint {
+            font-size: clamp(14px, 1.5vw, 20px);
+            color: var(--muted);
+            max-width: 70%;
+            line-height: 1.6;
+            padding-left: 2vw;
+            border-left: 4px solid var(--terracotta);
+        }
+
+        /* --- Rules slide --- */
+        .rules-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2vw;
+            margin-top: 4vh;
+            max-width: 90%;
+        }
+
+        .rule-card {
+            background: var(--white);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 3vh 2vw;
+            border-top: 4px solid var(--terracotta);
+        }
+
+        .rule-card .num {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: clamp(14px, 1.4vw, 18px);
+            color: var(--terracotta);
+            margin-bottom: 1.5vh;
+            letter-spacing: .1em;
+        }
+
+        .rule-card .txt {
+            font-size: clamp(14px, 1.5vw, 19px);
+            line-height: 1.5;
+            color: var(--graphite);
+        }
+
+        .rule-card .txt strong {
+            font-weight: 600;
+        }
+
+        /* --- Result placeholder --- */
+        .result-placeholder {
+            border-radius: 8px;
+            padding: 5vh 4vw;
+            margin-top: 4vh;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 600;
+            font-size: clamp(16px, 1.8vw, 24px);
+            text-align: center;
+            max-width: 80%;
+        }
+
+        /* --- Meta on slides --- */
+        .slide-meta {
+            position: absolute;
+            top: 5vh;
+            right: 6vw;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: clamp(11px, 1.1vw, 14px);
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .slide-meta .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--terracotta);
+        }
+
+        .slide-result .slide-meta {
+            color: rgba(255,255,255,.5);
+        }
+
+        /* --- Nav --- */
+        .nav {
+            position: fixed;
+            bottom: 3vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(30, 42, 50, .92);
+            backdrop-filter: blur(8px);
+            padding: 10px 16px;
+            border-radius: 100px;
+            z-index: 10;
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .deck:hover .nav,
+        .nav:focus-within {
+            opacity: 1;
+        }
+
+        .nav button {
+            background: none;
+            border: none;
+            color: var(--white);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background .15s;
+            font-size: 18px;
+        }
+
+        .nav button:hover {
+            background: rgba(255,255,255,.12);
+        }
+
+        .nav button:disabled {
+            opacity: .3;
+            cursor: default;
+        }
+
+        .nav .counter {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--white);
+            min-width: 60px;
+            text-align: center;
+            letter-spacing: .05em;
+        }
+
+        .nav .counter .total {
+            color: rgba(255,255,255,.4);
+        }
+
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: var(--terracotta);
+            z-index: 20;
+            transition: width .35s ease;
+            width: 0;
+        }
+
+        /* --- Fullscreen hint --- */
+        .fs-hint {
+            position: fixed;
+            bottom: 3vh;
+            right: 3vw;
+            font-family: 'Manrope', sans-serif;
+            font-size: 11px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.35);
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .3s;
+        }
+
+        .deck:hover .fs-hint {
+            opacity: 1;
+        }
+
+        /* --- Mobile --- */
+        @media (max-width: 768px) {
+            .slide { padding: 10vh 8vw; }
+            .slide h1 { font-size: clamp(28px, 8vw, 44px); }
+            .slide h2 { font-size: clamp(22px, 6vw, 34px); }
+            .slide .big-question { font-size: clamp(20px, 5.5vw, 30px); max-width: 100%; }
+            .slide .sub { max-width: 100%; }
+            .rules-grid { grid-template-columns: 1fr; max-width: 100%; }
+            .slide-meta { top: 3vh; right: 5vw; }
+            .nav { bottom: 2vh; }
+            .fs-hint { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+
+<div class="deck" id="deck">
+
+    <!-- 1. TITLE -->
+    <section class="slide slide-title active">
+        <div class="eyebrow">Диагностическая сессия</div>
+        <h1>Карта заторов<br>коммуникации</h1>
+        <p class="sub">3–4 часа · три зоны · карта, которую вы построите сами</p>
+    </section>
+
+    <!-- 2. FRAME -->
+    <section class="slide">
+        <div class="eyebrow">Рамка</div>
+        <h2>Что здесь будет<br>и чего не будет</h2>
+        <p class="sub" style="max-width:80%; margin-bottom:3vh;">
+            Я не буду учить вас управлять и не буду принимать решения за вас. Моя задача — <strong>помочь вам увидеть</strong>, где в коммуникации образуется муть. Карта, которая появится на доске, — ваша.
+        </p>
+        <div class="hint">
+            Если диагноз принесу я — он уйдёт вместе со мной. Если увидите вы — останется.
+        </div>
+    </section>
+
+    <!-- 3. RULES -->
+    <section class="slide">
+        <div class="eyebrow">Правила</div>
+        <h2>Три правила на сегодня</h2>
+        <div class="rules-grid">
+            <div class="rule-card">
+                <div class="num">01</div>
+                <div class="txt">Говорим про <strong>конкретные случаи</strong>, а не про людей: не «Петров не слышит», а «был случай, когда задача вернулась не той».</div>
+            </div>
+            <div class="rule-card">
+                <div class="num">02</div>
+                <div class="txt">Говорим <strong>от первого лица</strong>: «я вижу», «я не понял», «я не сказал».</div>
+            </div>
+            <div class="rule-card">
+                <div class="num">03</div>
+                <div class="txt">Всё, что прозвучит, <strong>остаётся здесь</strong>. Цитаты за пределы комнаты не выносим.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. WARM-UP -->
+    <section class="slide">
+        <div class="eyebrow">Разогрев</div>
+        <div class="big-question">
+            Вспомните <em>один случай</em> за последние 2–3 месяца, когда вы поняли: «вот здесь у нас что-то сломалось в общении».
+        </div>
+        <p class="sub">Не проблему целиком — именно момент, когда вы это заметили. Одно предложение.</p>
+    </section>
+
+    <!-- 5. ZONE 1 -->
+    <section class="slide slide-zone">
+        <div class="slide-meta"><span class="dot"></span>Зона 1 · 45 мин</div>
+        <div class="eyebrow">Зона 1 · Обсуждение проблем</div>
+        <div class="big-question">
+            Когда в компании всплывает сложная проблема — она обсуждается открыто, или её сначала «готовят» в узком кругу, а на общее выносят <em>уже с решением</em>?
+        </div>
+        <p class="sub">Приведите конкретный пример за последние месяцы.</p>
+    </section>
+
+    <!-- 6. ZONE 1 RESULT -->
+    <section class="slide slide-result">
+        <div class="slide-meta"><span class="dot"></span>Зона 1 · результат</div>
+        <div class="eyebrow" style="color:var(--terracotta);">Зона 1 · результат</div>
+        <h2>Что вы назвали</h2>
+        <div class="result-placeholder">
+            Здесь появятся ваши формулировки —<br>3–7 пунктов с доски
+        </div>
+    </section>
+
+    <!-- 7. ZONE 2 -->
+    <section class="slide slide-zone">
+        <div class="slide-meta"><span class="dot"></span>Зона 2 · 45 мин</div>
+        <div class="eyebrow">Зона 2 · Передача указаний</div>
+        <div class="big-question">
+            Бывает ли так, что на выходе получается <em>не то, что задумывалось</em>? Не «иногда», а как паттерн.
+        </div>
+        <p class="sub">Приведите пример: что ставили — что получили.</p>
+    </section>
+
+    <!-- 8. ZONE 2 RESULT -->
+    <section class="slide slide-result">
+        <div class="slide-meta"><span class="dot"></span>Зона 2 · результат</div>
+        <div class="eyebrow" style="color:var(--terracotta);">Зона 2 · результат</div>
+        <h2>Что вы назвали</h2>
+        <div class="result-placeholder">
+            Здесь появятся ваши формулировки —<br>3–7 пунктов с доски
+        </div>
+    </section>
+
+    <!-- 9. ZONE 3 -->
+    <section class="slide slide-zone">
+        <div class="slide-meta"><span class="dot"></span>Зона 3 · 45 мин</div>
+        <div class="eyebrow">Зона 3 · Обратная связь</div>
+        <div class="big-question">
+            Руководитель узнаёт о проблеме <em>раньше или позже</em>, чем она становится критичной? Бывает ли так, что сигналы были, но их не услышали?
+        </div>
+    </section>
+
+    <!-- 10. ZONE 3 RESULT -->
+    <section class="slide slide-result">
+        <div class="slide-meta"><span class="dot"></span>Зона 3 · результат</div>
+        <div class="eyebrow" style="color:var(--terracotta);">Зона 3 · результат</div>
+        <h2>Что вы назвали</h2>
+        <div class="result-placeholder">
+            Здесь появятся ваши формулировки —<br>3–7 пунктов с доски
+        </div>
+    </section>
+
+    <!-- 11. ASSEMBLY -->
+    <section class="slide">
+        <div class="slide-meta"><span class="dot"></span>Сборка карты · 30 мин</div>
+        <div class="eyebrow">Сборка карты</div>
+        <div class="big-question">
+            Вот карта, которую <em>вы</em> построили. Я только записывал.<br><br>
+            Что здесь <em>самое дорогое</em> для бизнеса? Где вы теряете больше всего — в скорости, в деньгах, в качестве решений?
+        </div>
+    </section>
+
+    <!-- 12. APPROPRIATION -->
+    <section class="slide">
+        <div class="slide-meta"><span class="dot"></span>Присвоение · 15 мин</div>
+        <div class="eyebrow">Присвоение</div>
+        <div class="big-question">
+            Что из этой карты вы <em>лично</em> узнаёте как своё?<br><br>
+            Не «у нас так», а <em>«я в этом участвую»</em>. Один пункт от каждого.
+        </div>
+    </section>
+
+    <!-- 13. NEXT STEP -->
+    <section class="slide">
+        <div class="eyebrow">Дальше</div>
+        <h2>Два пути</h2>
+        <p class="sub" style="max-width:75%; margin-bottom:2.5vh;">
+            <strong>Первый:</strong> вы уносите карту и работаете с ней сами. Это нормально, и иногда этого достаточно.
+        </p>
+        <p class="sub" style="max-width:75%; margin-bottom:2.5vh;">
+            <strong>Второй:</strong> мы вместе разбираем, как расчистить эти места — уже в формате работы: месяц, несколько встреч, изменение паттернов.
+        </p>
+        <div class="hint">
+            Решение за вами. Не сегодня — сегодня просто посмотрите на карту и скажите: есть ли здесь то, с чем вы хотите работать дальше?
+        </div>
+    </section>
+
+    <!-- 14. PERSONAL -->
+    <section class="slide">
+        <div class="eyebrow">Личный итог</div>
+        <div class="big-question">
+            Каждый забирает с собой <em>один пункт</em> из карты — тот, который лично для вас самый болезненный.
+        </div>
+        <p class="sub">И один вопрос, который вы зададите себе на этой неделе: <strong>что я могу сделать иначе уже завтра, чтобы этот затор не повторялся?</strong></p>
+    </section>
+
+    <!-- 15. CLOSE -->
+    <section class="slide slide-title">
+        <div class="eyebrow">Бизнес Флоу</div>
+        <h1>Спасибо<br>за работу</h1>
+        <p class="sub">Карта — ваша. Через неделю напишу каждому: что изменилось?</p>
+    </section>
+
+</div>
+
+<!-- NAV -->
+<div class="nav" id="nav">
+    <button id="prevBtn" aria-label="Назад">←</button>
+    <div class="counter"><span id="cur">1</span> <span class="total">/ <span id="tot">15</span></span></div>
+    <button id="nextBtn" aria-label="Вперёд">→</button>
+</div>
+
+<div class="fs-hint">F — на весь экран</div>
+
+<script>
+    (function() {
+        const slides = document.querySelectorAll('.slide');
+        const total = slides.length;
+        const progress = document.getElementById('progress');
+        const curEl = document.getElementById('cur');
+        const totEl = document.getElementById('tot');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        let current = 0;
+
+        totEl.textContent = total;
+
+        function show(index) {
+            if (index < 0) index = 0;
+            if (index >= total) index = total - 1;
+
+            slides.forEach((s, i) => {
+                s.classList.remove('active', 'prev');
+                if (i === index) s.classList.add('active');
+                else if (i < index) s.classList.add('prev');
+            });
+
+            current = index;
+            curEl.textContent = index + 1;
+            prevBtn.disabled = index === 0;
+            nextBtn.disabled = index === total - 1;
+
+            progress.style.width = ((index + 1) / total * 100) + '%';
+        }
+
+        function next() { show(current + 1); }
+        function prev() { show(current - 1); }
+
+        nextBtn.addEventListener('click', next);
+        prevBtn.addEventListener('click', prev);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+                e.preventDefault();
+                next();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                e.preventDefault();
+                prev();
+            } else if (e.key === 'Home') {
+                e.preventDefault();
+                show(0);
+            } else if (e.key === 'End') {
+                e.preventDefault();
+                show(total - 1);
+            } else if (e.key === 'f' || e.key === 'F' || e.key === 'а' || e.key === 'А') {
+                toggleFullscreen();
+            }
+        });
+
+        // Swipe
+        let touchStartX = 0;
+        let touchEndX = 0;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) next();
+                else prev();
+            }
+        }, { passive: true });
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
+        }
+
+        show(0);
+    })();
+</script>
+
+</body>
+</html>
