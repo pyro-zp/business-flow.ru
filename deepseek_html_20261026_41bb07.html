@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта заторов — Бизнес Флоу</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --graphite: #1E2A32;
+            --sand: #E8DFD3;
+            --sand-light: #F4EFE7;
+            --terracotta: #C96F4A;
+            --terracotta-dark: #B35C38;
+            --terracotta-soft: rgba(201, 111, 74, .1);
+            --text: #1E2A32;
+            --muted: #5C6B75;
+            --line: rgba(30, 42, 50, .14);
+            --white: #fff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--sand-light);
+            line-height: 1.5;
+            font-size: 16px;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+            line-height: 1.2;
+            letter-spacing: -.02em;
+            color: var(--graphite);
+        }
+
+        /* --- Wrapper --- */
+        .quiz-wrap {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 32px 20px 48px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--graphite);
+            text-decoration: none;
+            margin-bottom: 32px;
+        }
+
+        .brand .mark {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--terracotta);
+            border-radius: 1px;
+        }
+
+        /* --- Card --- */
+        .card {
+            width: 100%;
+            max-width: 620px;
+            background: var(--white);
+            border-radius: 8px;
+            box-shadow: 0 4px 32px rgba(30, 42, 50, .08);
+            padding: 40px 44px 36px;
+            position: relative;
+        }
+
+        @media (max-width: 600px) {
+            .card { padding: 28px 22px 24px; }
+            .quiz-wrap { padding: 20px 12px 32px; }
+        }
+
+        /* --- Progress --- */
+        .progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--line);
+            border-radius: 8px 8px 0 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--terracotta);
+            width: 0;
+            transition: width .35s ease;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        .progress-meta .current {
+            color: var(--terracotta);
+        }
+
+        /* --- Step --- */
+        .step {
+            display: none;
+            animation: fadeIn .3s ease;
+        }
+
+        .step.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step .eyebrow {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--terracotta);
+            margin-bottom: 12px;
+        }
+
+        .step h2 {
+            font-size: clamp(20px, 3vw, 24px);
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.3;
+        }
+
+        .step .hint-text {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 20px;
+            margin-top: -12px;
+        }
+
+        /* --- Options --- */
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 18px;
+            border: 1.5px solid var(--line);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: border-color .15s, background .15s;
+            background: var(--white);
+        }
+
+        .option:hover {
+            border-color: var(--terracotta);
+            background: var(--sand-light);
+        }
+
+        .option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .option .marker {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            border: 1.5px solid var(--line);
+            border-radius: 50%;
+            margin-top: 1px;
+            position: relative;
+            transition: border-color .15s;
+        }
+
+        .option .marker::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--terracotta);
+            transition: transform .15s;
+        }
+
+        .option .txt {
+            font-size: 15px;
+            line-height: 1.4;
+            color: var(--graphite);
+        }
+
+        .option input:checked ~ .marker {
+            border-color: var(--terracotta);
+        }
+
+        .option input:checked ~ .marker::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .option input:checked ~ .txt {
+            font-weight: 600;
+        }
+
+        .option.selected {
+            border-color: var(--terracotta);
+            background: var(--terracotta-soft);
+        }
+
+        /* --- Buttons --- */
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 14px 26px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: background .15s, transform .1s, color .15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active { transform: translateY(1px); }
+
+        .btn-primary {
+            background: var(--terracotta);
+            color: var(--white);
+        }
+
+        .btn-primary:hover { background: var(--terracotta-dark); }
+
+        .btn-primary:disabled {
+            background: var(--line);
+            color: var(--muted);
+            cursor: not-allowed;
+        }
+
+        .btn-ghost {
+            background: none;
+            color: var(--muted);
+            padding: 14px 8px;
+            font-size: 13px;
+        }
+
+        .btn-ghost:hover { color: var(--graphite); }
+
+        /* --- Contact form --- */
+        .contact-fields {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .field label {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        .field input {
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            padding: 13px 14px;
+            border: 1.5px solid var(--line);
+            border-radius: 4px;
+            background: var(--white);
+            color: var(--graphite);
+            transition: border-color .15s;
+        }
+
+        .field input:focus {
+            outline: none;
+            border-color: var(--terracotta);
+        }
+
+        .field input.error {
+            border-color: var(--terracotta-dark);
+            background: var(--terracotta-soft);
+        }
+
+        .error-msg {
+            font-size: 12px;
+            color: var(--terracotta-dark);
+            display: none;
+        }
+
+        .error-msg.show { display: block; }
+
+        /* --- Result --- */
+        .result {
+            text-align: center;
+            padding: 8px 0;
+        }
+
+        .result .badge {
+            display: inline-block;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            border-radius: 100px;
+            margin-bottom: 20px;
+        }
+
+        .result .badge.ok {
+            background: var(--terracotta-soft);
+            color: var(--terracotta-dark);
+        }
+
+        .result .badge.neutral {
+            background: var(--sand);
+            color: var(--graphite);
+        }
+
+        .result h2 {
+            font-size: clamp(22px, 3vw, 26px);
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.25;
+        }
+
+        .result .lead {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .result .next-step {
+            background: var(--sand-light);
+            border-left: 3px solid var(--terracotta);
+            border-radius: 4px;
+            padding: 16px 18px;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.55;
+            color: var(--graphite);
+            margin-bottom: 24px;
+        }
+
+        .result .next-step strong { font-weight: 600; }
+
+        .result .contact-line {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .result .contact-line a {
+            color: var(--terracotta);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .result .contact-line a:hover { text-decoration: underline; }
+
+        /* --- Footer --- */
+        .foot {
+            margin-top: 24px;
+            font-size: 12px;
+            color: var(--muted);
+            text-align: center;
+            max-width: 620px;
+            line-height: 1.5;
+        }
+
+        .foot a {
+            color: var(--muted);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--line);
+        }
+
+        .foot a:hover { color: var(--terracotta); }
+
+        /* --- Hidden honeypot --- */
+        .hp {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-wrap">
+
+    <a href="https://business-flow.ru" class="brand">
+        <span class="mark"></span>Бизнес Флоу
+    </a>
+
+    <div class="card">
+
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="progress-meta">
+            <span>Шаг <span class="current" id="curStep">1</span> из 5</span>
+            <span id="stepLabel">Размер команды</span>
+        </div>
+
+        <form id="quizForm" novalidate>
+
+            <!-- Q1 -->
+            <div class="step active" data-step="1" data-label="Размер команды">
+                <div class="eyebrow">Вопрос 1</div>
+                <h2>Сколько человек в вашей команде, которая принимает решения?</h2>
+                <p class="hint-text">Считаем руководителей и ключевых сотрудников, а не весь штат.</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q1" value="small" data-qual="no">
+                        <span class="marker"></span>
+                        <span class="txt">До 8 человек</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="mid" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">8–15 человек</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="large" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">15–30 человек</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="xlarge" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">30–100 человек</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q1" value="huge" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Больше 100 человек</span>
+                    </label>
+                </div>
+                <div class="actions">
+                    <span></span>
+                    <button type="button" class="btn btn-primary" data-next disabled>Далее →</button>
+                </div>
+            </div>
+
+            <!-- Q2 -->
+            <div class="step" data-step="2" data-label="Что буксует">
+                <div class="eyebrow">Вопрос 2</div>
+                <h2>Что чаще всего буксует в коммуникации?</h2>
+                <p class="hint-text">Можно выбрать один вариант — самый болезненный.</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q2" value="problems" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Обсуждение проблем — их либо «готовят» заранее, либо не поднимают</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="orders" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Передача указаний — на выходе получается не то, что задумывалось</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="feedback" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Обратная связь — снизу вверх ничего не доходит</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q2" value="all" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Всё сразу — как будто связь порвана везде</span>
+                    </label>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn btn-ghost" data-prev>← Назад</button>
+                    <button type="button" class="btn btn-primary" data-next disabled>Далее →</button>
+                </div>
+            </div>
+
+            <!-- Q3 -->
+            <div class="step" data-step="3" data-label="Рассинхрон">
+                <div class="eyebrow">Вопрос 3</div>
+                <h2>Бывает, что на совещании договорились, а после — каждый понял по-своему?</h2>
+                <p class="hint-text">Это ключевой вопрос — от ответа зависит, есть ли смысл в диагностике.</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q3" value="regular" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Да, регулярно — это системная история</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="sometimes" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Иногда — но бывает больно</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q3" value="never" data-qual="no">
+                        <span class="marker"></span>
+                        <span class="txt">Нет, у нас такого нет</span>
+                    </label>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn btn-ghost" data-prev>← Назад</button>
+                    <button type="button" class="btn btn-primary" data-next disabled>Далее →</button>
+                </div>
+            </div>
+
+            <!-- Q4 -->
+            <div class="step" data-step="4" data-label="Ваша роль">
+                <div class="eyebrow">Вопрос 4</div>
+                <h2>Кто вы в компании?</h2>
+                <p class="hint-text">Это помогает понять, как с вами говорить — и о чём именно.</p>
+                <div class="options">
+                    <label class="option">
+                        <input type="radio" name="q4" value="owner" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Собственник / владелец</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="top" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">Топ-менеджер (CEO, COO, директор)</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="hr" data-qual="yes">
+                        <span class="marker"></span>
+                        <span class="txt">HR-директор / директор по людям</span>
+                    </label>
+                    <label class="option">
+                        <input type="radio" name="q4" value="other" data-qual="no">
+                        <span class="marker"></span>
+                        <span class="txt">Другое</span>
+                    </label>
+                </div>
+                <div class="actions">
+                    <button type="button" class="btn btn-ghost" data-prev>← Назад</button>
+                    <button type="button" class="btn btn-primary" data-next disabled>Далее →</button>
+                </div>
+            </div>
+
+            <!-- Q5 (contact) -->
+            <div class="step" data-step="5" data-label="Контакты">
+                <div class="eyebrow">Последний шаг</div>
+                <h2>Куда отправить вашу карту заторов?</h2>
+                <p class="hint-text">На основе ваших ответов соберём карту и пришлём в течение дня.</p>
+
+                <div class="contact-fields">
+                    <div class="field">
+                        <label for="name">Как к вам обращаться</label>
+                        <input type="text" id="name" name="name" placeholder="Имя" autocomplete="given-name">
+                        <span class="error-msg" data-for="name">Напишите, пожалуйста, имя</span>
+                    </div>
+                    <div class="field">
+                        <label for="phone">Телефон или Telegram</label>
+                        <input type="text" id="phone" name="phone" placeholder="+7 ... или @username" autocomplete="tel">
+                        <span class="error-msg" data-for="phone">Оставьте телефон или ник в Telegram</span>
+                    </div>
+                    <div class="field">
+                        <label for="company">Компания (необязательно)</label>
+                        <input type="text" id="company" name="company" placeholder="Название компании" autocomplete="organization">
+                    </div>
+                </div>
+
+                <!-- Honeypot -->
+                <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off">
+
+                <div class="actions">
+                    <button type="button" class="btn btn-ghost" data-prev>← Назад</button>
+                    <button type="submit" class="btn btn-primary">Получить карту →</button>
+                </div>
+            </div>
+
+            <!-- Result -->
+            <div class="step" data-step="6" data-label="Готово" id="resultStep">
+                <div class="result" id="resultContent">
+                    <!-- заполняется скриптом -->
+                </div>
+                <div class="actions" style="justify-content: center;">
+                    <a href="https://business-flow.ru" class="btn btn-primary" style="text-decoration: none;">На сайт →</a>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="foot">
+        Если не хотите оставлять контакты — <a href="https://business-flow.ru">вернитесь на сайт</a> и напишите напрямую. Отвечу честно: иногда достаточно одного разговора, чтобы понять, есть ли смысл.
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        const form = document.getElementById('quizForm');
+        const steps = Array.from(document.querySelectorAll('.step'));
+        const progressFill = document.getElementById('progressFill');
+        const curStepEl = document.getElementById('curStep');
+        const stepLabelEl = document.getElementById('stepLabel');
+        const resultContent = document.getElementById('resultContent');
+
+        let current = 1;
+        const totalQuestions = 5;
+
+        // ---- Хелпер: активный шаг ----
+        function getActiveStep() {
+            return steps.find(s => s.classList.contains('active'));
+        }
+
+        // ---- Обновить прогресс и метку ----
+        function updateMeta() {
+            const activeStep = getActiveStep();
+            const stepNum = activeStep ? parseInt(activeStep.dataset.step) : 1;
+
+            if (stepNum <= totalQuestions) {
+                curStepEl.textContent = stepNum;
+                stepLabelEl.textContent = activeStep.dataset.label || '';
+                progressFill.style.width = ((stepNum - 1) / totalQuestions * 100) + '%';
+            } else {
+                curStepEl.textContent = totalQuestions;
+                stepLabelEl.textContent = 'Готово';
+                progressFill.style.width = '100%';
+            }
+        }
+
+        // ---- Переход к шагу ----
+        function showStep(num) {
+            steps.forEach(s => s.classList.remove('active'));
+            const target = steps.find(s => parseInt(s.dataset.step) === num);
+            if (target) {
+                target.classList.add('active');
+                current = num;
+                updateMeta();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // ---- Проверка: все ли radio отвечены в шаге ----
+        function stepHasAnswer(stepEl) {
+            const radios = stepEl.querySelectorAll('input[type="radio"]');
+            if (radios.length === 0) return true;
+            const names = new Set(Array.from(radios).map(r => r.name));
+            for (const name of names) {
+                if (!stepEl.querySelector(`input[name="${name}"]:checked`)) return false;
+            }
+            return true;
+        }
+
+        // ---- Подсветка выбранного option + активация кнопки ----
+        function refreshStepUI(stepEl) {
+            const radios = stepEl.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                const label = radio.closest('.option');
+                if (label) label.classList.toggle('selected', radio.checked);
+            });
+
+            const nextBtn = stepEl.querySelector('[data-next]');
+            if (nextBtn) {
+                nextBtn.disabled = !stepHasAnswer(stepEl);
+            }
+        }
+
+        // ---- Слушатели на radio ----
+        form.addEventListener('change', (e) => {
+            if (e.target.type === 'radio') {
+                const stepEl = e.target.closest('.step');
+                if (stepEl) refreshStepUI(stepEl);
+            }
+        });
+
+        // ---- Кнопки «Далее» / «Назад» ----
+        form.addEventListener('click', (e) => {
+            const nextBtn = e.target.closest('[data-next]');
+            const prevBtn = e.target.closest('[data-prev]');
+
+            if (nextBtn) {
+                const stepEl = nextBtn.closest('.step');
+                if (!stepHasAnswer(stepEl)) return;
+                showStep(current + 1);
+            }
+
+            if (prevBtn) {
+                if (current > 1) showStep(current - 1);
+            }
+        });
+
+        // ---- Валидация контактов ----
+        function validateContact() {
+            let ok = true;
+
+            const name = document.getElementById('name');
+            const phone = document.getElementById('phone');
+
+            const nameErr = document.querySelector('.error-msg[data-for="name"]');
+            const phoneErr = document.querySelector('.error-msg[data-for="phone"]');
+
+            if (!name.value.trim()) {
+                name.classList.add('error');
+                nameErr.classList.add('show');
+                ok = false;
+            } else {
+                name.classList.remove('error');
+                nameErr.classList.remove('show');
+            }
+
+            if (!phone.value.trim()) {
+                phone.classList.add('error');
+                phoneErr.classList.add('show');
+                ok = false;
+            } else {
+                phone.classList.remove('error');
+                phoneErr.classList.remove('show');
+            }
+
+            return ok;
+        }
+
+        // Снимаем ошибку при вводе
+        ['name', 'phone'].forEach(id => {
+            const el = document.getElementById(id);
+            const err = document.querySelector(`.error-msg[data-for="${id}"]`);
+            el.addEventListener('input', () => {
+                if (el.value.trim()) {
+                    el.classList.remove('error');
+                    err.classList.remove('show');
+                }
+            });
+        });
+
+        // ---- Сбор ответов ----
+        function collectAnswers() {
+            const data = new FormData(form);
+            const answers = {};
+            let qualified = true;
+
+            ['q1', 'q2', 'q3', 'q4'].forEach(q => {
+                answers[q] = data.get(q) || null;
+            });
+
+            // Логика квалификации
+            // q1: "small" (до 8) — неквалифицирован
+            if (answers.q1 === 'small') qualified = false;
+            // q3: "never" — неквалифицирован
+            if (answers.q3 === 'never') qualified = false;
+            // q4: "other" — неквалифицирован
+            if (answers.q4 === 'other') qualified = false;
+
+            return {
+                answers,
+                qualified,
+                name: (data.get('name') || '').trim(),
+                phone: (data.get('phone') || '').trim(),
+                company: (data.get('company') || '').trim(),
+                honeypot: data.get('website') || ''
+            };
+        }
+
+        // ---- Рендер результата ----
+        function renderResult(lead) {
+            const isQual = lead.qualified;
+
+            let html = '';
+
+            if (isQual) {
+                html += `<div class="badge ok">Готово</div>`;
+                html += `<h2>Спасибо! Карта почти у вас.</h2>`;
+                html += `<p class="lead">${escapeHtml(lead.name)}, я получил ваши ответы. Соберу карту заторов с учётом того, что вы рассказали, и отправлю в течение дня на указанный контакт.</p>`;
+                html += `<div class="next-step"><strong>Что будет дальше:</strong><br>Я напишу вам лично — задам 2–3 уточняющих вопроса и предложу короткий разговор на 15 минут. Если по ответам увижу, что диагностика имеет смысл, расскажу, как она устроена.</div>`;
+            } else {
+                html += `<div class="badge neutral">Спасибо</div>`;
+                html += `<h2>Карту пришлю, но, честно, — сейчас вряд ли это про вас.</h2>`;
+                html += `<p class="lead">${escapeHtml(lead.name)}, по вашим ответам видно, что заторов, с которыми я работаю, у вас пока немного. Возможно, вы только растёте — и это нормально.</p>`;
+                html += `<div class="next-step"><strong>Что всё же пришлю:</strong><br>Общую карту заторов — она может пригодиться, когда команда станет больше. И если в какой-то момент почувствуете, что «все согласны, а после — каждый по-своему», напишите — вернёмся к разговору.</div>`;
+            }
+
+            html += `<p class="contact-line">Если что-то срочно — <a href="https://business-flow.ru">business-flow.ru</a> или напишите напрямую.</p>`;
+
+            resultContent.innerHTML = html;
+        }
+
+        // ---- Экранирование ----
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // ---- Отправка формы ----
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (!validateContact()) return;
+
+            const lead = collectAnswers();
+
+            // Honeypot: если заполнен — тихо игнорим
+            if (lead.honeypot) {
+                showStep(6);
+                renderResult(lead);
+                return;
+            }
+
+            // Здесь — точка интеграции с CRM / почтой / Telegram-ботом
+            // Пример: fetch('/api/lead', { method: 'POST', body: JSON.stringify(lead) })
+            // Пока что — просто логируем в консоль
+            console.log('LEAD:', lead);
+
+            // (Опционально) сохранить в localStorage для отладки
+            try {
+                localStorage.setItem('bf_last_lead', JSON.stringify({
+                    ...lead,
+                    ts: new Date().toISOString()
+                }));
+            } catch (_) {}
+
+            showStep(6);
+            renderResult(lead);
+        });
+
+        // ---- Инициализация ----
+        updateMeta();
+    })();
+</script>
+
+</body>
+</html>
