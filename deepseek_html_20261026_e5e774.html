@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карта заторов коммуникации — Бизнес Флоу</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --graphite: #1E2A32;
+            --sand: #E8DFD3;
+            --sand-light: #F4EFE7;
+            --terracotta: #C96F4A;
+            --terracotta-dark: #B35C38;
+            --text: #1E2A32;
+            --muted: #5C6B75;
+            --line: rgba(30, 42, 50, .12);
+            --line-light: rgba(232, 223, 211, .18);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: #fff;
+            line-height: 1.6;
+            font-size: 17px;
+            -webkit-font-smoothing: antialiased;
+            padding: 40px 24px;
+        }
+
+        .page {
+            max-width: 780px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 48px 56px;
+            border-radius: 6px;
+            box-shadow: 0 4px 24px rgba(30, 42, 50, .06);
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 20px 12px; }
+            .page { padding: 28px 20px; }
+        }
+
+        /* --- Типографика --- */
+        h1, h2, h3, h4 {
+            font-family: 'Manrope', sans-serif;
+            line-height: 1.15;
+            letter-spacing: -.02em;
+        }
+
+        h1 {
+            font-size: clamp(28px, 5vw, 38px);
+            font-weight: 800;
+            margin-bottom: 8px;
+            color: var(--graphite);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: var(--muted);
+            margin-bottom: 32px;
+            max-width: 600px;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-top: 40px;
+            margin-bottom: 12px;
+            color: var(--graphite);
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--graphite);
+        }
+
+        h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--graphite);
+        }
+
+        p {
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        /* --- Вводный блок --- */
+        .intro {
+            background: var(--sand-light);
+            padding: 24px 28px;
+            border-radius: 6px;
+            margin-bottom: 32px;
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .intro p {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .intro p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* --- Чек-листы --- */
+        .zone {
+            margin-bottom: 36px;
+        }
+
+        .zone-header {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .zone-num {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 14px;
+            color: var(--terracotta);
+            letter-spacing: .1em;
+        }
+
+        .zone-title {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--graphite);
+        }
+
+        .zone-desc {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        .checklist {
+            list-style: none;
+            border-top: 1px solid var(--line);
+        }
+
+        .checklist li {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--line);
+            font-size: 16px;
+            cursor: pointer;
+            transition: background .15s;
+        }
+
+        .checklist li:hover {
+            background: var(--sand-light);
+            margin: 0 -8px;
+            padding-left: 8px;
+            padding-right: 8px;
+            border-radius: 4px;
+        }
+
+        .checklist input[type="checkbox"] {
+            flex-shrink: 0;
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+            accent-color: var(--terracotta);
+            cursor: pointer;
+        }
+
+        .zone-hint {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--sand-light);
+            border-radius: 4px;
+            font-size: 14px;
+            color: var(--muted);
+            border-left: 3px solid var(--terracotta);
+        }
+
+        .zone-hint strong {
+            color: var(--graphite);
+        }
+
+        /* --- Результат --- */
+        .result-section {
+            background: var(--graphite);
+            color: #fff;
+            padding: 32px 36px;
+            border-radius: 6px;
+            margin: 40px 0;
+        }
+
+        .result-section h2 {
+            color: #fff;
+            border-bottom-color: var(--terracotta);
+            margin-top: 0;
+        }
+
+        .result-display {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin: 20px 0;
+        }
+
+        .result-number {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 64px;
+            line-height: 1;
+            color: var(--terracotta);
+            min-width: 100px;
+        }
+
+        .result-text {
+            font-size: 18px;
+            color: rgba(255, 255, 255, .8);
+            max-width: 500px;
+        }
+
+        .result-scale {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .scale-item {
+            padding: 16px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, .06);
+            border: 1px solid rgba(255, 255, 255, .1);
+        }
+
+        .scale-item .range {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 14px;
+            color: var(--terracotta);
+            margin-bottom: 6px;
+        }
+
+        .scale-item .desc {
+            font-size: 14px;
+            color: rgba(255, 255, 255, .7);
+            line-height: 1.4;
+        }
+
+        /* --- CTA --- */
+        .cta-block {
+            background: var(--sand);
+            padding: 32px 36px;
+            border-radius: 6px;
+            margin-top: 40px;
+        }
+
+        .cta-block h2 {
+            margin-top: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .cta-block p {
+            max-width: 560px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--terracotta);
+            color: #fff;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 16px;
+            padding: 16px 32px;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: background .2s, transform .15s;
+            text-decoration: none;
+            margin-top: 8px;
+        }
+
+        .btn:hover {
+            background: var(--terracotta-dark);
+            transform: translateY(-1px);
+        }
+
+        .contact-line {
+            margin-top: 20px;
+            font-size: 15px;
+            color: var(--muted);
+        }
+
+        .contact-line a {
+            color: var(--terracotta);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .contact-line a:hover {
+            text-decoration: underline;
+        }
+
+        /* --- Футер --- */
+        .footer-note {
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid var(--line);
+            font-size: 13px;
+            color: var(--muted);
+            text-align: center;
+        }
+
+        /* --- Утилиты --- */
+        .divider {
+            height: 1px;
+            background: var(--line);
+            margin: 32px 0;
+        }
+
+        @media print {
+            body { padding: 0; background: #fff; }
+            .page { box-shadow: none; padding: 20px; max-width: 100%; }
+            .btn { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page">
+
+    <!-- Шапка -->
+    <h1>Карта заторов коммуникации</h1>
+    <p class="subtitle">Самодиагностика для собственников и топ-команд. 7 минут. 18 вопросов. Три зоны, где бизнес теряет скорость и решения.</p>
+
+    <div class="intro">
+        <p><strong>Зачем это нужно.</strong> Заторы в коммуникации не видны в отчётах. Они не про людей и не про компетенции. Они про то, <strong>как устроен обмен информацией</strong>: как обсуждаются проблемы, как передаются указания, как возвращается обратная связь.</p>
+        <p>Их главная особенность — <strong>накопительный эффект</strong>. Каждая недоговорённость делает следующую дороже. Каждое искажённое указание возвращается как переделка. Каждая непроговорённая проблема всплывает позже — уже в виде кризиса.</p>
+        <p>Эта карта помогает увидеть заторы <strong>до того</strong>, как они станут дорогими.</p>
+    </div>
+
+    <p class="muted">Отметьте пункты, которые <strong>регулярно</strong> происходят в вашей компании (не разово, а как паттерн).</p>
+
+    <!-- Зона 1 -->
+    <div class="zone" id="zone1">
+        <div class="zone-header">
+            <span class="zone-num">01</span>
+            <span class="zone-title">Обсуждение проблем</span>
+        </div>
+        <div class="zone-desc">Как в компании говорят о сложном.</div>
+        <ul class="checklist">
+            <li><input type="checkbox" data-zone="1"> Сложные проблемы сначала «готовят» в узком кругу, а на общее обсуждение выносят уже с решением</li>
+            <li><input type="checkbox" data-zone="1"> На совещаниях все согласны, но после — каждый понимает по-своему</li>
+            <li><input type="checkbox" data-zone="1"> Люди боятся поднимать проблемы, потому что «это может выйти боком»</li>
+            <li><input type="checkbox" data-zone="1"> Проблема обсуждается месяцами, но не закрывается</li>
+            <li><input type="checkbox" data-zone="1"> Один и тот же вопрос всплывает снова и снова, как будто его не решали</li>
+            <li><input type="checkbox" data-zone="1"> Критику воспринимают как атаку, а не как информацию</li>
+        </ul>
+        <div class="zone-hint"><strong>Если отмечено 2+</strong> — в компании нет безопасного канала для обсуждения проблем. Информация идёт не туда или не идёт вообще.</div>
+    </div>
+
+    <!-- Зона 2 -->
+    <div class="zone" id="zone2">
+        <div class="zone-header">
+            <span class="zone-num">02</span>
+            <span class="zone-title">Передача указаний</span>
+        </div>
+        <div class="zone-desc">Как задачи и решения доходят до исполнителей.</div>
+        <ul class="checklist">
+            <li><input type="checkbox" data-zone="2"> На выходе получается не то, что задумывалось</li>
+            <li><input type="checkbox" data-zone="2"> Руководитель уверен, что «всё объяснил», а исполнитель — что «не понял»</li>
+            <li><input type="checkbox" data-zone="2"> Задачи передаются через посредников и обрастают интерпретациями</li>
+            <li><input type="checkbox" data-zone="2"> Никто не проверяет, как понял задачу исполнитель, — проверяют только результат</li>
+            <li><input type="checkbox" data-zone="2"> Указания идут сверху вниз, но не уточняются снизу вверх</li>
+            <li><input type="checkbox" data-zone="2"> Одну и ту же задачу приходится переделывать 2–3 раза</li>
+        </ul>
+        <div class="zone-hint"><strong>Если отмечено 2+</strong> — указания теряют смысл по пути. Каждая передача — это потеря точности, и она накапливается.</div>
+    </div>
+
+    <!-- Зона 3 -->
+    <div class="zone" id="zone3">
+        <div class="zone-header">
+            <span class="zone-num">03</span>
+            <span class="zone-title">Обратная связь</span>
+        </div>
+        <div class="zone-desc">Как в компании возвращается информация снизу вверх.</div>
+        <ul class="checklist">
+            <li><input type="checkbox" data-zone="3"> Люди предпочитают не говорить, если что-то не так</li>
+            <li><input type="checkbox" data-zone="3"> Руководитель узнаёт о проблеме последним</li>
+            <li><input type="checkbox" data-zone="3"> Обратная связь есть, но она не влияет ни на что</li>
+            <li><input type="checkbox" data-zone="3"> Сотрудники обсуждают проблемы между собой, но не с руководством</li>
+            <li><input type="checkbox" data-zone="3"> На вопрос «как дела?» все отвечают «нормально», даже когда нет</li>
+            <li><input type="checkbox" data-zone="3"> Увольнения и конфликты случаются «внезапно» — хотя сигналы были</li>
+        </ul>
+        <div class="zone-hint"><strong>Если отмечено 2+</strong> — обратная связь не работает как система. Компания управляется вслепую.</div>
+    </div>
+
+    <!-- Результат -->
+    <div class="result-section" id="result">
+        <h2>Результат</h2>
+        <div class="result-display">
+            <div class="result-number" id="totalCount">0</div>
+            <div class="result-text" id="resultText">Отметьте пункты выше, чтобы увидеть результат.</div>
+        </div>
+        <div class="result-scale">
+            <div class="scale-item">
+                <div class="range">0–3</div>
+                <div class="desc">Коммуникация в целом здорова. Есть точечные зоны, которые можно подтянуть.</div>
+            </div>
+            <div class="scale-item">
+                <div class="range">4–7</div>
+                <div class="desc">Заторы есть и они системные. Компания теряет скорость и решения, но пока не видит где.</div>
+            </div>
+            <div class="scale-item">
+                <div class="range">8+</div>
+                <div class="desc">Коммуникация стала узким местом бизнеса. Проблемы возвращаются, решения не держатся, эффект накапливается в минус.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <p><strong>Заторы — не про людей.</strong> Это не «плохие сотрудники» и не «слабый руководитель». Это про <strong>паттерны</strong>, которые сложились в культуре общения и которые воспроизводятся сами. Именно поэтому они не лечатся точечно: «давайте лучше общаться» не работает. Нужно увидеть, где именно ломается, — и расчистить эти места системно.</p>
+
+    <!-- CTA -->
+    <div class="cta-block">
+        <h2>Что делать дальше</h2>
+        <p>Если вы отметили <strong>4 и больше</strong> — у вас есть заторы, которые стоит увидеть на карте целиком, а не по отдельным симптомам.</p>
+        <p><strong>Диагностическая сессия с командой — 3–4 часа.</strong> На ней мы разбираем все три зоны, находим конкретные места, где теряется информация, и составляем карту заторов: где именно ломается, почему и что с этим делать.</p>
+        <p style="font-family:'Manrope',sans-serif;font-weight:800;font-size:24px;color:var(--graphite);margin:16px 0;">90 000 ₽ <span style="font-size:16px;font-weight:500;color:var(--muted);">за сессию</span></p>
+        <p>Если после сессии вы решите, что хотите не только увидеть заторы, но и расчистить их — есть <strong>программа на месяц (300 000 ₽)</strong>: работа по изменению паттернов, с накопительным эффектом, чтобы заторы не вернулись через неделю.</p>
+        <a href="https://business-flow.ru" class="btn" target="_blank" rel="noopener">Обсудить сессию →</a>
+        <div class="contact-line">
+            Илья Соловьёв · <a href="tel:+79936347682">+7 993 634-76-82</a> · <a href="https://business-flow.ru" target="_blank" rel="noopener">business-flow.ru</a>
+        </div>
+    </div>
+
+    <div class="footer-note">
+        Если не уверены, нужна ли сессия — напишите, задайте вопрос. Отвечу честно: иногда достаточно одного разговора, чтобы понять, есть ли смысл.
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        const checkboxes = document.querySelectorAll('.checklist input[type="checkbox"]');
+        const totalEl = document.getElementById('totalCount');
+        const textEl = document.getElementById('resultText');
+
+        function updateResult() {
+            const checked = document.querySelectorAll('.checklist input[type="checkbox"]:checked').length;
+            totalEl.textContent = checked;
+
+            let message = '';
+            if (checked === 0) {
+                message = 'Отметьте пункты выше, чтобы увидеть результат.';
+            } else if (checked <= 3) {
+                message = 'Коммуникация в целом здорова. Есть точечные зоны, которые можно подтянуть.';
+            } else if (checked <= 7) {
+                message = 'Заторы есть и они системные. Компания теряет скорость и решения, но пока не видит где.';
+            } else {
+                message = 'Коммуникация стала узким местом бизнеса. Проблемы возвращаются, решения не держатся, эффект накапливается в минус.';
+            }
+            textEl.textContent = message;
+        }
+
+        checkboxes.forEach(cb => cb.addEventListener('change', updateResult));
+        updateResult();
+    })();
+</script>
+
+</body>
+</html>
